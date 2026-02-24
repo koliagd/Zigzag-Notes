@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zigzag Заметки</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111111; --bg2: #181818; --bg3: #222222; --bg4: #2a2a2a; --bg5: #333333;
+    --border: #2e2e2e; --border2: #444444; --text: #e8e8e8; --text2: #999999; --text3: #555555;
+    --accent: #c8c8c8; --danger: #cc4444; --success: #44aa66; --warn: #aa8844; --pin: #d4aa44;
+    --radius: 8px; --radius2: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif; overflow: hidden; }
+
+  /* AUTH */
+  #auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+  .auth-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 44px 40px; width: 400px; max-width: 95vw; }
+  .auth-logo { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .auth-logo em { color: var(--text3); font-style: normal; }
+  .auth-sub { font-size: 13px; color: var(--text3); margin-bottom: 28px; }
+  .lang-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+  .lang-chip { padding: 4px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
+  .lang-chip.on { background: var(--bg5); color: var(--text); border-color: var(--border2); }
+  .auth-tabs { display: flex; gap: 2px; background: var(--bg3); border-radius: var(--radius); padding: 3px; margin-bottom: 24px; }
+  .auth-tab { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; color: var(--text3); transition: all 0.15s; }
+  .auth-tab.on { background: var(--bg5); color: var(--text); }
+  .auth-field { margin-bottom: 14px; }
+  .auth-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .auth-field input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 14px; font-family: 'Manrope',sans-serif; outline: none; transition: border-color 0.2s; }
+  .auth-field input:focus { border-color: var(--border2); }
+  .auth-btn { width: 100%; padding: 12px; background: var(--bg5); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Manrope',sans-serif; margin-top: 4px; }
+  .auth-btn:hover { background: var(--border2); }
+  .auth-err { color: var(--danger); font-size: 12px; margin-top: 10px; display: none; }
+
+  /* LAYOUT */
+  #app { display: flex; height: 100vh; display: none; }
+
+  /* SIDEBAR */
+  #sidebar { width: 230px; min-width: 230px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .sb-head { padding: 18px 14px 14px; border-bottom: 1px solid var(--border); }
+  .sb-logo { font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); }
+  .sb-logo em { color: var(--text3); font-style: normal; }
+  .sb-user { font-size: 11px; color: var(--text3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sb-sec { padding: 12px 6px 2px; }
+  .sb-sec-lbl { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin-bottom: 2px; }
+  .sb-item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 7px; cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 500; transition: all 0.12s; user-select: none; }
+  .sb-item:hover { background: var(--bg3); color: var(--text); }
+  .sb-item.on { background: var(--bg4); color: var(--text); }
+  .sb-item-ic { font-size: 14px; width: 20px; text-align: center; }
+  .sb-cnt { margin-left: auto; font-size: 11px; background: var(--bg4); padding: 1px 6px; border-radius: 8px; color: var(--text3); }
+  .sb-folders { flex: 1; overflow-y: auto; padding-bottom: 6px; }
+  .sb-folders::-webkit-scrollbar { width: 3px; }
+  .sb-folders::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+  .sb-bot { border-top: 1px solid var(--border); padding: 8px; }
+  .add-folder-btn { width: 100%; padding: 7px 10px; background: none; border: 1px dashed var(--border); border-radius: 7px; color: var(--text3); font-size: 12px; cursor: pointer; transition: all 0.15s; font-family: 'Manrope',sans-serif; display: flex; align-items: center; gap: 6px; }
+  .add-folder-btn:hover { border-color: var(--border2); color: var(--text2); background: var(--bg3); }
+
+  /* MAIN */
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  #topbar { display: flex; align-items: center; gap: 10px; padding: 13px 18px; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .tb-title { font-size: 17px; font-weight: 800; color: var(--text); flex: 1; }
+  .tb-search { display: flex; align-items: center; gap: 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 12px; width: 220px; transition: all 0.2s; }
+  .tb-search:focus-within { border-color: var(--border2); width: 280px; }
+  .tb-search input { background: none; border: none; outline: none; color: var(--text); font-size: 13px; font-family: 'Manrope',sans-serif; width: 100%; }
+  .tb-search input::placeholder { color: var(--text3); }
+  .ib { width: 34px; height: 34px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.15s; font-size: 15px; flex-shrink: 0; }
+  .ib:hover { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+  .sort-sel { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-size: 12px; padding: 7px 9px; outline: none; font-family: 'Manrope',sans-serif; cursor: pointer; }
+  #stats-bar { display: flex; gap: 14px; padding: 7px 18px; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--text3); }
+
+  /* NOTES */
+  #notes-area { flex: 1; overflow-y: auto; padding: 18px; }
+  #notes-area::-webkit-scrollbar { width: 5px; }
+  #notes-area::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+  #nc { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 11px; }
+  #nc.lv { grid-template-columns: 1fr; }
+  .nc { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 15px; cursor: pointer; transition: all 0.18s; position: relative; display: flex; flex-direction: column; gap: 7px; animation: fi 0.18s ease; overflow: hidden; }
+  @keyframes fi { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  .nc:hover { border-color: var(--border2); background: var(--bg3); transform: translateY(-1px); }
+  .nc.pinned { border-color: #3a3020; }
+  .nc-color { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .nc-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; padding-right: 36px; }
+  .nc-preview { font-size: 12px; color: var(--text2); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .nc-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: auto; }
+  .nc-date { font-size: 11px; color: var(--text3); }
+  .nc-tag { font-size: 10px; background: var(--bg4); color: var(--text3); padding: 2px 6px; border-radius: 8px; }
+  .nc-pin-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; opacity: 0.7; }
+  .nc-acts { display: none; position: absolute; top: 8px; right: 8px; gap: 3px; }
+  .nc:hover .nc-acts { display: flex; }
+  .nc.pinned:hover .nc-acts { right: 26px; }
+  .nc-act { width: 24px; height: 24px; background: var(--bg4); border: 1px solid var(--border); border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.12s; color: var(--text2); }
+  .nc-act:hover { background: var(--bg5); color: var(--text); }
+  .nc-act.d:hover { background: #2a1010; color: var(--danger); border-color: var(--danger); }
+  .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; }
+  .empty-ic { font-size: 44px; margin-bottom: 14px; opacity: 0.3; }
+  .empty-txt { font-size: 15px; color: var(--text2); font-weight: 600; }
+  .empty-sub { font-size: 12px; color: var(--text3); margin-top: 5px; }
+
+  /* EDITOR */
+  #eo { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  #eo.open { display: flex; }
+  #eb { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); width: 740px; max-width: 95vw; height: 84vh; max-height: 680px; display: flex; flex-direction: column; overflow: hidden; animation: su 0.18s ease; }
+  @keyframes su { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
+  #eh { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--bg3); }
+  #epin { background: none; border: none; cursor: pointer; font-size: 15px; filter: grayscale(1); opacity: 0.4; transition: all 0.15s; flex-shrink: 0; }
+  #epin.on { filter: none; opacity: 1; }
+  #etitle { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 17px; font-weight: 700; font-family: 'Manrope',sans-serif; min-width: 0; }
+  #ecat { background: none; border: none; outline: none; color: var(--text3); font-size: 12px; font-family: 'Manrope',sans-serif; width: 100px; }
+  #erem { background: var(--bg4); border: 1px solid var(--border); border-radius: 5px; padding: 3px 7px; color: var(--text2); font-size: 11px; outline: none; }
+  .ehb { padding: 5px 10px; background: var(--bg4); border: 1px solid var(--border); border-radius: 5px; color: var(--text2); font-size: 12px; cursor: pointer; transition: all 0.15s; font-family: 'Manrope',sans-serif; font-weight: 600; }
+  .ehb:hover { background: var(--bg5); color: var(--text); }
+  .ehb.sv { background: var(--bg5); color: var(--text); border-color: var(--border2); }
+  #et { display: flex; align-items: center; gap: 3px; padding: 7px 14px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .tb { width: 26px; height: 26px; background: none; border: 1px solid transparent; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text2); transition: all 0.12s; font-weight: 700; }
+  .tb:hover { background: var(--bg4); color: var(--text); border-color: var(--border); }
+  .tsep { width: 1px; height: 18px; background: var(--border); margin: 0 3px; }
+  #ec { flex: 1; padding: 15px; outline: none; font-size: 14px; line-height: 1.7; color: var(--text); overflow-y: auto; font-family: 'Manrope',sans-serif; }
+  #ec::-webkit-scrollbar { width: 4px; }
+  #ec::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+  #ec h2 { font-size: 18px; color: var(--text); margin: 8px 0 4px; }
+  #ec h3 { font-size: 15px; color: var(--text2); margin: 6px 0 2px; }
+  #ec code { background: var(--bg4); padding: 1px 5px; border-radius: 3px; font-family: 'Space Mono',monospace; font-size: 12px; }
+  #ec a { color: var(--text2); }
+  #ef { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-top: 1px solid var(--border); background: var(--bg3); }
+  .tag-inp { background: var(--bg4); border: 1px solid var(--border); border-radius: 16px; padding: 3px 10px; font-size: 12px; color: var(--text); outline: none; font-family: 'Manrope',sans-serif; width: 130px; }
+  .tag-inp::placeholder { color: var(--text3); }
+  #etags { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
+  .etag { font-size: 11px; background: var(--bg4); border: 1px solid var(--border); color: var(--text2); padding: 2px 7px; border-radius: 8px; display: flex; align-items: center; gap: 3px; }
+  .etag-x { cursor: pointer; color: var(--text3); font-size: 10px; }
+  .etag-x:hover { color: var(--danger); }
+  #echars { font-size: 11px; color: var(--text3); white-space: nowrap; }
+
+  /* MODALS */
+  .mo { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .mo.open { display: flex; }
+  .mb { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 26px; width: 380px; max-width: 90vw; animation: su 0.18s ease; }
+  .mb-title { font-size: 15px; font-weight: 700; margin-bottom: 18px; }
+  .mb-field { margin-bottom: 12px; }
+  .mb-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .mb-field input, .mb-field select { width: 100%; padding: 8px 11px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 13px; outline: none; font-family: 'Manrope',sans-serif; }
+  .mb-actions { display: flex; gap: 7px; justify-content: flex-end; margin-top: 18px; }
+  .mbtn { padding: 7px 16px; border-radius: var(--radius); border: 1px solid var(--border); font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Manrope',sans-serif; transition: all 0.15s; }
+  .mbtn.p { background: var(--bg5); color: var(--text); border-color: var(--border2); }
+  .mbtn.p:hover { background: var(--border2); }
+  .mbtn.s { background: var(--bg3); color: var(--text2); }
+  .mbtn.s:hover { background: var(--bg4); }
+  .mbtn.d { background: #2a1010; color: var(--danger); border-color: var(--danger); }
+  .mbtn.d:hover { background: #3a1515; }
+
+  /* SETTINGS */
+  #so { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: none; align-items: center; justify-content: center; }
+  #so.open { display: flex; }
+  #sb2 { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); width: 480px; max-width: 92vw; max-height: 80vh; overflow-y: auto; animation: su 0.18s ease; }
+  .s-head { display: flex; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg2); z-index: 1; }
+  .s-head h2 { flex: 1; font-size: 15px; font-weight: 700; }
+  .s-close { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text3); }
+  .s-close:hover { color: var(--text); }
+  .s-body { padding: 18px 22px; }
+  .s-sec { margin-bottom: 24px; }
+  .s-sec h3 { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .s-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .s-row:last-child { border-bottom: none; }
+  .s-row-l { font-size: 13px; }
+  .s-row-s { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .s-sel { background: var(--bg3); border: 1px solid var(--border); border-radius: 5px; padding: 5px 9px; color: var(--text); font-size: 12px; outline: none; font-family: 'Manrope',sans-serif; cursor: pointer; }
+  .s-dbtn { padding: 6px 13px; background: #2a1010; border: 1px solid var(--danger); border-radius: 5px; color: var(--danger); font-size: 12px; cursor: pointer; font-family: 'Manrope',sans-serif; transition: all 0.15s; }
+  .s-dbtn:hover { background: #3a1515; }
+
+  /* CTX MENU */
+  #ctx { position: fixed; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 4px; z-index: 999; min-width: 155px; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+  .ctx-i { padding: 7px 11px; font-size: 13px; color: var(--text2); cursor: pointer; border-radius: 4px; display: flex; align-items: center; gap: 8px; transition: all 0.12s; }
+  .ctx-i:hover { background: var(--bg4); color: var(--text); }
+  .ctx-i.d { color: var(--danger); }
+  .ctx-i.d:hover { background: #2a1010; }
+  .ctx-sep { height: 1px; background: var(--border); margin: 4px 0; }
+
+  /* TOAST */
+  #toast-c { position: fixed; bottom: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 7px; }
+  .toast { background: var(--bg4); border: 1px solid var(--border2); border-radius: var(--radius); padding: 11px 16px; font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 9px; animation: ti 0.25s ease; min-width: 200px; }
+  @keyframes ti { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+  .toast.ok { border-color: var(--success); }
+  .toast.er { border-color: var(--danger); }
+
+  .spin { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--text2); border-radius: 50%; animation: sp 0.8s linear infinite; margin: auto; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    #sidebar { display: none; }
+    #nc { grid-template-columns: 1fr; }
+    #eb { width: 100%; height: 100%; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">Zigzag <em>//</em> Notes</div>
+    <div class="auth-sub" id="a-tag">Умные заметки. Всегда под рукой.</div>
+    <div class="lang-row">
+      <div class="lang-chip on" data-l="ru" onclick="aLang('ru',this)">🇷🇺 Рус</div>
+      <div class="lang-chip" data-l="en" onclick="aLang('en',this)">🇬🇧 Eng</div>
+      <div class="lang-chip" data-l="es" onclick="aLang('es',this)">🇪🇸 Esp</div>
+      <div class="lang-chip" data-l="zh" onclick="aLang('zh',this)">🇨🇳 中文</div>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab on" id="at-li" onclick="sTab('li')">Войти</div>
+      <div class="auth-tab" id="at-re" onclick="sTab('re')">Регистрация</div>
+    </div>
+    <div id="f-li">
+      <div class="auth-field"><label>Email</label><input type="email" id="li-em" placeholder="you@example.com"></div>
+      <div class="auth-field"><label id="li-pl">Пароль</label><input type="password" id="li-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="auth-btn" onclick="doLogin()" id="li-btn">Войти</button>
+    </div>
+    <div id="f-re" style="display:none">
+      <div class="auth-field"><label>Email</label><input type="email" id="re-em" placeholder="you@example.com"></div>
+      <div class="auth-field"><label id="re-pl">Пароль</label><input type="password" id="re-pw" placeholder="••••••••"></div>
+      <div class="auth-field"><label id="re-p2l">Подтвердите пароль</label><input type="password" id="re-pw2" placeholder="••••••••" onkeydown="if(event.key==='Enter')doReg()"></div>
+      <button class="auth-btn" onclick="doReg()" id="re-btn">Создать аккаунт</button>
+    </div>
+    <div class="auth-err" id="a-err"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">Zigzag <em>//</em></div>
+      <div class="sb-user" id="sb-u">—</div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl" id="sb-nav-lbl">Навигация</div>
+      <div class="sb-item on" id="n-all" onclick="sf('all')"><span class="sb-item-ic">📝</span><span id="t-all">Все заметки</span><span class="sb-cnt" id="c-all">0</span></div>
+      <div class="sb-item" id="n-pin" onclick="sf('pin')"><span class="sb-item-ic">📌</span><span id="t-pin">Закреплённые</span><span class="sb-cnt" id="c-pin">0</span></div>
+      <div class="sb-item" id="n-rem" onclick="sf('rem')"><span class="sb-item-ic">⏰</span><span id="t-rem">С напоминанием</span><span class="sb-cnt" id="c-rem">0</span></div>
+      <div class="sb-item" id="n-arc" onclick="sf('arc')"><span class="sb-item-ic">🗄️</span><span id="t-arc">Архив</span><span class="sb-cnt" id="c-arc">0</span></div>
+      <div class="sb-item" id="n-del" onclick="sf('del')"><span class="sb-item-ic">🗑️</span><span id="t-del">Корзина</span><span class="sb-cnt" id="c-del">0</span></div>
+    </div>
+    <div class="sb-sec"><div class="sb-sec-lbl" id="sb-fld-lbl">Папки</div></div>
+    <div class="sb-folders" id="flist"></div>
+    <div class="sb-bot">
+      <button class="add-folder-btn" onclick="openFolderModal()"><span>+</span><span id="t-nf">Новая папка</span></button>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="topbar">
+      <div class="tb-title" id="tb-ttl">Все заметки</div>
+      <div class="tb-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="si" placeholder="Поиск..." oninput="onSrch()"></div>
+      <select class="sort-sel" id="ss" onchange="onSort()"><option value="updated_at" id="so-upd">По дате</option><option value="title" id="so-ttl">По названию</option><option value="created_at" id="so-cre">По созданию</option></select>
+      <div class="ib" id="vb" onclick="togView()" title="Вид">⊞</div>
+      <div class="ib" onclick="openNew()" title="Новая заметка">✏️</div>
+      <div class="ib" onclick="doImport()" title="Импорт ZIP">📥</div>
+      <div class="ib" onclick="exportAll()" title="Экспорт ZIP">📤</div>
+      <div class="ib" onclick="openSettings()" title="Настройки">⚙️</div>
+    </div>
+    <div id="stats-bar"><span id="stats-t">0 заметок</span></div>
+    <div id="notes-area"><div id="nc"></div></div>
+  </div>
+</div>
+
+<!-- EDITOR -->
+<div id="eo"><div id="eb">
+  <div id="eh">
+    <button id="epin" onclick="togPin()">📌</button>
+    <input type="text" id="etitle" placeholder="Заголовок...">
+    <input type="text" id="ecat" placeholder="Категория...">
+    <input type="datetime-local" id="erem">
+    <button class="ehb" onclick="closeEd()">✕</button>
+    <button class="ehb sv" id="esave-btn" onclick="saveNote()">Сохранить</button>
+  </div>
+  <div id="et">
+    <button class="tb" onclick="f('bold')"><b>B</b></button>
+    <button class="tb" onclick="f('italic')"><i>I</i></button>
+    <button class="tb" onclick="f('underline')"><u>U</u></button>
+    <button class="tb" onclick="f('strikeThrough')"><s>S</s></button>
+    <div class="tsep"></div>
+    <button class="tb" onclick="fb('h2')" style="font-size:10px">H2</button>
+    <button class="tb" onclick="fb('h3')" style="font-size:10px">H3</button>
+    <button class="tb" onclick="f('insertUnorderedList')">≡</button>
+    <button class="tb" onclick="f('insertOrderedList')" style="font-size:10px">1.</button>
+    <div class="tsep"></div>
+    <button class="tb" onclick="f('justifyLeft')">◁</button>
+    <button class="tb" onclick="f('justifyCenter')">▶◀</button>
+    <button class="tb" onclick="f('justifyRight')">▷</button>
+    <div class="tsep"></div>
+    <button class="tb" onclick="inHR()">—</button>
+    <button class="tb" onclick="inCode()" style="font-size:10px">&lt;/&gt;</button>
+    <button class="tb" onclick="inLink()">🔗</button>
+    <div class="tsep"></div>
+    <button class="tb" onclick="f('undo')">↩</button>
+    <button class="tb" onclick="f('redo')">↪</button>
+    <div class="tsep"></div>
+    <select id="fsel" style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text2);font-size:11px;padding:2px;outline:none" onchange="f('fontSize',false,this.value)">
+      <option value="2">S</option><option value="3" selected>M</option><option value="4">L</option><option value="5">XL</option>
+    </select>
+    <input type="color" id="tclr" style="width:24px;height:24px;border:1px solid var(--border);border-radius:4px;cursor:pointer;padding:1px;background:var(--bg3)" title="Цвет текста" onchange="f('foreColor',false,this.value)">
+    <div class="tsep"></div>
+    <input type="color" id="nclr" value="#2a2a2a" style="width:24px;height:24px;border:1px solid var(--border);border-radius:4px;cursor:pointer;padding:1px;background:var(--bg3)" title="Цвет заметки">
+  </div>
+  <div id="ec" contenteditable="true" oninput="updChars()" onkeydown="edKey(event)"></div>
+  <div id="ef">
+    <input type="text" class="tag-inp" id="tgi" placeholder="#тег" onkeydown="tagKD(event)">
+    <div id="etags"></div>
+    <span id="echars">0</span>
+  </div>
+</div></div>
+
+<!-- FOLDER MODAL -->
+<div class="mo" id="fm"><div class="mb">
+  <div class="mb-title" id="fm-ttl">Новая папка</div>
+  <div class="mb-field"><label id="fm-n">Название</label><input type="text" id="fn-i" placeholder="Моя папка" onkeydown="if(event.key==='Enter')saveFM()"></div>
+  <div class="mb-field"><label id="fm-ic">Иконка</label><input type="text" id="fi-i" placeholder="📁" style="width:70px"></div>
+  <div class="mb-field"><label id="fm-c">Цвет</label><input type="color" id="fc-i" value="#555555"></div>
+  <div class="mb-actions">
+    <button class="mbtn s" onclick="closeFM()" id="fm-can">Отмена</button>
+    <button class="mbtn p" onclick="saveFM()" id="fm-sav">Сохранить</button>
+  </div>
+</div></div>
+
+<!-- DELETE MODAL -->
+<div class="mo" id="dm"><div class="mb">
+  <div class="mb-title" id="dm-ttl">Удалить заметку?</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:14px" id="dm-txt">Заметка будет перемещена в корзину.</div>
+  <div class="mb-actions">
+    <button class="mbtn s" onclick="closeDM()" id="dm-can">Отмена</button>
+    <button class="mbtn d" onclick="confirmDel()" id="dm-del">Удалить</button>
+  </div>
+</div></div>
+
+<!-- SETTINGS -->
+<div id="so"><div id="sb2">
+  <div class="s-head"><h2 id="s-ttl">Настройки</h2><button class="s-close" onclick="closeSettings()">✕</button></div>
+  <div class="s-body">
+    <div class="s-sec">
+      <h3 id="s-acc">Аккаунт</h3>
+      <div class="s-row"><div><div class="s-row-l" id="s-em-l">Email</div><div class="s-row-s" id="s-em">—</div></div><button class="s-dbtn" onclick="doLogout()" id="s-lo">Выйти</button></div>
+    </div>
+    <div class="s-sec">
+      <h3 id="s-int">Интерфейс</h3>
+      <div class="s-row"><div><div class="s-row-l" id="s-lang-l">Язык</div></div>
+        <select class="s-sel" id="ls" onchange="chLang(this.value)"><option value="ru">🇷🇺 Русский</option><option value="en">🇬🇧 English</option><option value="es">🇪🇸 Español</option><option value="zh">🇨🇳 中文</option></select>
+      </div>
+      <div class="s-row"><div><div class="s-row-l" id="s-srt-l">Сортировка</div></div>
+        <select class="s-sel" id="s-srt" onchange="chSort(this.value)"><option value="updated_at" id="ss-upd">По дате</option><option value="title" id="ss-ttl">По названию</option><option value="created_at" id="ss-cre">По созданию</option></select>
+      </div>
+      <div class="s-row"><div><div class="s-row-l" id="s-vw-l">Вид</div></div>
+        <select class="s-sel" id="s-vw" onchange="chView(this.value)"><option value="grid" id="sv-g">Сетка</option><option value="list" id="sv-l">Список</option></select>
+      </div>
+    </div>
+    <div class="s-sec">
+      <h3 id="s-data">Управление данными</h3>
+      <div class="s-row"><div><div class="s-row-l" id="s-exp-l">Экспорт заметок</div><div class="s-row-s" id="s-exp-s">Скачать ZIP архив</div></div><button class="mbtn p" onclick="exportAll()" id="s-exp-b">Экспорт</button></div>
+      <div class="s-row"><div><div class="s-row-l" id="s-imp-l">Импорт заметок</div><div class="s-row-s" id="s-imp-s">Загрузить ZIP архив</div></div><button class="mbtn p" onclick="doImport()" id="s-imp-b">Импорт</button></div>
+      <div class="s-row"><div><div class="s-row-l" id="s-tr-l">Очистить корзину</div><div class="s-row-s" id="s-tr-s">Безвозвратное удаление</div></div><button class="s-dbtn" onclick="emptyTrash()" id="s-tr-b">Очистить</button></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- CTX MENU -->
+<div id="ctx">
+  <div class="ctx-i" onclick="ca('ed')">✏️ <span id="cx-ed">Редактировать</span></div>
+  <div class="ctx-i" onclick="ca('pin')">📌 <span id="cx-pin">Закрепить</span></div>
+  <div class="ctx-i" onclick="ca('arc')">🗄️ <span id="cx-arc">Архивировать</span></div>
+  <div class="ctx-i" onclick="ca('exp')">📤 <span id="cx-exp">Экспорт</span></div>
+  <div class="ctx-i" onclick="ca('dup')">📋 <span id="cx-dup">Дублировать</span></div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-i d" onclick="ca('del')">🗑️ <span id="cx-del">Удалить</span></div>
+</div>
+
+<div id="toast-c"></div>
+<input type="file" id="zip-fi" accept=".zip" style="display:none" onchange="handleZip(event)">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const SU = 'https://nnfxxmqvroaughmpdhem.supabase.co';
+const SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uZnh4bXF2cm9hdWdobXBkaGVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODA4NzgsImV4cCI6MjA4NzQ1Njg3OH0.J40EJvQnEkHCuF7xcLBgnGpe21n29coQnni9gDt3UFs';
+
+// ── STATE ──────────────────────────────────────────
+const S = { user: null, tok: null, lang: localStorage.getItem('zz_lang')||'ru', notes: [], folders: [], prefs: { sort_by:'updated_at', view_mode:'grid' }, filt:'all', fFolder:null, q:'', editing:null, tags:[], ctxId:null, delId:null };
+
+// ── API ────────────────────────────────────────────
+async function api(method, path, body, useAuth=true) {
+  const tok = useAuth ? (S.tok||SK) : SK;
+  const h = {'apikey':SK,'Authorization':'Bearer '+tok,'Content-Type':'application/json','Prefer':'return=representation'};
+  const r = await fetch(SU+path, { method, headers:h, body: body?JSON.stringify(body):undefined });
+  const txt = await r.text();
+  try { return { data: JSON.parse(txt), ok: r.ok, status: r.status }; }
+  catch { return { data: txt, ok: r.ok, status: r.status }; }
+}
+async function authApi(method, path, body) {
+  const h = {'apikey':SK,'Content-Type':'application/json'};
+  const r = await fetch(SU+path, { method, headers:h, body: body?JSON.stringify(body):undefined });
+  return r.json();
+}
+
+// ── TRANSLATIONS ───────────────────────────────────
+const T = {
+  ru:{ tagline:'Умные заметки. Всегда под рукой.', login:'Войти', reg:'Регистрация', pw:'Пароль', cpw:'Подтвердите пароль', loginBtn:'Войти', regBtn:'Создать аккаунт', all:'Все заметки', pin:'Закреплённые', rem:'С напоминанием', arc:'Архив', del:'Корзина', nav:'Навигация', flds:'Папки', nf:'Новая папка', srch:'Поиск...', settings:'Настройки', save:'Сохранить', cancel:'Отмена', delete:'Удалить', delQ:'Удалить заметку?', delTxt:'Заметка будет перемещена в корзину.', edit:'Редактировать', pinV:'Закрепить', arcV:'Архивировать', expV:'Экспорт', dup:'Дублировать', acc:'Аккаунт', iface:'Интерфейс', lang:'Язык', sort:'Сортировка', view:'Вид', data:'Управление данными', expAll:'Экспорт заметок', expAllS:'Скачать ZIP архив', impN:'Импорт заметок', impS:'Загрузить ZIP архив', clrTr:'Очистить корзину', clrTrS:'Безвозвратное удаление', clr:'Очистить', exp:'Экспорт', imp:'Импорт', logout:'Выйти', fName:'Название', fIco:'Иконка', fClr:'Цвет', sUpd:'По дате', sTtl:'По названию', sCre:'По созданию', grd:'Сетка', lst:'Список', cnt:(n)=>`${n} заметок`, noN:'Нет заметок', noNH:'Нажмите ✏️ для создания', saved:'Сохранено', deleted:'Удалено', exported:'Экспорт выполнен', imported:(n)=>`Импортировано: ${n}`, trEmpty:'Корзина очищена', duped:'Дублировано', pinned:'Закреплено', unpinned:'Откреплено', arcd:'Архивировано', unarcd:'Извлечено', chars:(n)=>`${n} симв.` },
+  en:{ tagline:'Smart notes. Always at hand.', login:'Login', reg:'Register', pw:'Password', cpw:'Confirm password', loginBtn:'Log In', regBtn:'Create Account', all:'All Notes', pin:'Pinned', rem:'With Reminders', arc:'Archive', del:'Trash', nav:'Navigation', flds:'Folders', nf:'New Folder', srch:'Search...', settings:'Settings', save:'Save', cancel:'Cancel', delete:'Delete', delQ:'Delete note?', delTxt:'Note will be moved to trash.', edit:'Edit', pinV:'Pin', arcV:'Archive', expV:'Export', dup:'Duplicate', acc:'Account', iface:'Interface', lang:'Language', sort:'Sort by', view:'View', data:'Data Management', expAll:'Export notes', expAllS:'Download ZIP archive', impN:'Import notes', impS:'Upload ZIP archive', clrTr:'Empty trash', clrTrS:'Permanent delete', clr:'Clear', exp:'Export', imp:'Import', logout:'Logout', fName:'Name', fIco:'Icon', fClr:'Color', sUpd:'By date', sTtl:'By name', sCre:'By created', grd:'Grid', lst:'List', cnt:(n)=>`${n} notes`, noN:'No notes', noNH:'Click ✏️ to create', saved:'Saved', deleted:'Deleted', exported:'Exported', imported:(n)=>`Imported: ${n}`, trEmpty:'Trash cleared', duped:'Duplicated', pinned:'Pinned', unpinned:'Unpinned', arcd:'Archived', unarcd:'Unarchived', chars:(n)=>`${n} chars` },
+  es:{ tagline:'Notas inteligentes. Siempre a mano.', login:'Iniciar sesión', reg:'Registrarse', pw:'Contraseña', cpw:'Confirmar contraseña', loginBtn:'Entrar', regBtn:'Crear cuenta', all:'Todas las notas', pin:'Fijadas', rem:'Con recordatorios', arc:'Archivo', del:'Papelera', nav:'Navegación', flds:'Carpetas', nf:'Nueva carpeta', srch:'Buscar...', settings:'Ajustes', save:'Guardar', cancel:'Cancelar', delete:'Eliminar', delQ:'¿Eliminar nota?', delTxt:'La nota irá a la papelera.', edit:'Editar', pinV:'Fijar', arcV:'Archivar', expV:'Exportar', dup:'Duplicar', acc:'Cuenta', iface:'Interfaz', lang:'Idioma', sort:'Ordenar', view:'Vista', data:'Datos', expAll:'Exportar notas', expAllS:'Descargar ZIP', impN:'Importar notas', impS:'Cargar ZIP', clrTr:'Vaciar papelera', clrTrS:'Eliminación permanente', clr:'Limpiar', exp:'Exportar', imp:'Importar', logout:'Salir', fName:'Nombre', fIco:'Icono', fClr:'Color', sUpd:'Por fecha', sTtl:'Por nombre', sCre:'Por creación', grd:'Cuadrícula', lst:'Lista', cnt:(n)=>`${n} notas`, noN:'Sin notas', noNH:'Haz clic ✏️ para crear', saved:'Guardado', deleted:'Eliminado', exported:'Exportado', imported:(n)=>`Importado: ${n}`, trEmpty:'Papelera limpia', duped:'Duplicado', pinned:'Fijado', unpinned:'Desfijado', arcd:'Archivado', unarcd:'Desarchivado', chars:(n)=>`${n} car.` },
+  zh:{ tagline:'智能笔记，随时可用。', login:'登录', reg:'注册', pw:'密码', cpw:'确认密码', loginBtn:'登录', regBtn:'创建账户', all:'所有笔记', pin:'已置顶', rem:'有提醒', arc:'归档', del:'回收站', nav:'导航', flds:'文件夹', nf:'新文件夹', srch:'搜索...', settings:'设置', save:'保存', cancel:'取消', delete:'删除', delQ:'删除笔记？', delTxt:'笔记将移至回收站。', edit:'编辑', pinV:'置顶', arcV:'归档', expV:'导出', dup:'复制', acc:'账户', iface:'界面', lang:'语言', sort:'排序', view:'视图', data:'数据管理', expAll:'导出笔记', expAllS:'下载 ZIP 压缩包', impN:'导入笔记', impS:'上传 ZIP 压缩包', clrTr:'清空回收站', clrTrS:'永久删除', clr:'清空', exp:'导出', imp:'导入', logout:'退出', fName:'名称', fIco:'图标', fClr:'颜色', sUpd:'按日期', sTtl:'按名称', sCre:'按创建', grd:'网格', lst:'列表', cnt:(n)=>`${n} 条笔记`, noN:'没有笔记', noNH:'点击 ✏️ 创建', saved:'已保存', deleted:'已删除', exported:'已导出', imported:(n)=>`已导入: ${n}`, trEmpty:'回收站已清空', duped:'已复制', pinned:'已置顶', unpinned:'已取消置顶', arcd:'已归档', unarcd:'已取消归档', chars:(n)=>`${n} 字符` }
+};
+
+function t(k,...a) { const l=T[S.lang]||T.ru; const v=l[k]||T.ru[k]||k; return typeof v==='function'?v(...a):v; }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── LANGUAGE ───────────────────────────────────────
+const TM = {
+  'a-tag':'tagline','at-li':'login','at-re':'reg','li-pl':'pw','re-pl':'pw','re-p2l':'cpw','li-btn':'loginBtn','re-btn':'regBtn',
+  'sb-nav-lbl':'nav','sb-fld-lbl':'flds','t-all':'all','t-pin':'pin','t-rem':'rem','t-arc':'arc','t-del':'del','t-nf':'nf',
+  'tb-ttl':null,'fm-ttl':'nf','fm-n':'fName','fm-ic':'fIco','fm-c':'fClr','fm-can':'cancel','fm-sav':'save',
+  'dm-ttl':'delQ','dm-txt':'delTxt','dm-can':'cancel','dm-del':'delete',
+  's-ttl':'settings','s-acc':'acc','s-em-l':'Email','s-int':'iface','s-lang-l':'lang','s-srt-l':'sort','s-vw-l':'view',
+  's-data':'data','s-exp-l':'expAll','s-exp-s':'expAllS','s-exp-b':'exp','s-imp-l':'impN','s-imp-s':'impS','s-imp-b':'imp',
+  's-tr-l':'clrTr','s-tr-s':'clrTrS','s-tr-b':'clr','s-lo':'logout',
+  'cx-ed':'edit','cx-pin':'pinV','cx-arc':'arcV','cx-exp':'expV','cx-dup':'dup','cx-del':'delete',
+  'so-upd':'sUpd','so-ttl':'sTtl','so-cre':'sCre','ss-upd':'sUpd','ss-ttl':'sTtl','ss-cre':'sCre','sv-g':'grd','sv-l':'lst',
+  'esave-btn':'save'
+};
+const PH = { 'si':'srch','etitle':null,'ecat':null,'tgi':null };
+
+function applyT() {
+  for(const [id,key] of Object.entries(TM)) {
+    const el = document.getElementById(id);
+    if(!el || !key) continue;
+    el.textContent = t(key);
+  }
+  document.getElementById('si').placeholder = t('srch');
+  document.getElementById('etitle').placeholder = t('all').includes('Note') ? 'Title...' : 'Заголовок...';
+  const l = document.getElementById('ls');
+  if(l) l.value = S.lang;
+}
+
+function aLang(lang, el) {
+  S.lang = lang; localStorage.setItem('zz_lang', lang);
+  document.querySelectorAll('.lang-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  applyT();
+}
+
+function chLang(lang) {
+  S.lang = lang; localStorage.setItem('zz_lang', lang); applyT();
+  savePref({language:lang}); renderNotes();
+}
+
+// ── AUTH ───────────────────────────────────────────
+let aTab = 'li';
+function sTab(tab) {
+  aTab = tab;
+  document.getElementById('f-li').style.display = tab==='li'?'block':'none';
+  document.getElementById('f-re').style.display = tab==='re'?'block':'none';
+  document.getElementById('at-li').classList.toggle('on', tab==='li');
+  document.getElementById('at-re').classList.toggle('on', tab==='re');
+  document.getElementById('a-err').style.display='none';
+}
+
+async function doLogin() {
+  const em = document.getElementById('li-em').value.trim();
+  const pw = document.getElementById('li-pw').value;
+  if(!em||!pw) return;
+  const btn=document.getElementById('li-btn');
+  btn.innerHTML='<div class="spin"></div>';
+  const d = await authApi('POST','/auth/v1/token?grant_type=password',{email:em,password:pw});
+  btn.textContent = t('loginBtn');
+  if(!d.access_token) { showErr(d.error_description||d.error||'Error'); return; }
+  onAuth(d);
+}
+
+async function doReg() {
+  const em=document.getElementById('re-em').value.trim();
+  const pw=document.getElementById('re-pw').value;
+  const pw2=document.getElementById('re-pw2').value;
+  if(!em||!pw) return;
+  if(pw!==pw2){showErr('Пароли не совпадают');return;}
+  const btn=document.getElementById('re-btn');
+  btn.innerHTML='<div class="spin"></div>';
+  const d = await authApi('POST','/auth/v1/signup',{email:em,password:pw});
+  btn.textContent = t('regBtn');
+  if(d.error){showErr(d.error_description||d.error);return;}
+  if(d.access_token){onAuth(d);return;}
+  showErr('Проверьте почту для подтверждения.');
+}
+
+function showErr(msg){const e=document.getElementById('a-err');e.textContent=msg;e.style.display='block';}
+
+function onAuth(d) {
+  S.tok=d.access_token; S.user=d.user;
+  localStorage.setItem('zz_token',d.access_token);
+  localStorage.setItem('zz_refresh',d.refresh_token||'');
+  localStorage.setItem('zz_user',JSON.stringify(d.user));
+  startApp();
+}
+
+async function tryAuto() {
+  const tok=localStorage.getItem('zz_token');
+  const usr=localStorage.getItem('zz_user');
+  if(!tok||!usr) return false;
+  const r = await fetch(SU+'/auth/v1/user',{headers:{'apikey':SK,'Authorization':'Bearer '+tok}});
+  if(!r.ok){
+    const ref=localStorage.getItem('zz_refresh');
+    if(ref){const d=await authApi('POST','/auth/v1/token?grant_type=refresh_token',{refresh_token:ref});if(d.access_token){onAuth(d);return true;}}
+    return false;
+  }
+  S.tok=tok; S.user=JSON.parse(usr); startApp(); return true;
+}
+
+function doLogout() {
+  ['zz_token','zz_refresh','zz_user'].forEach(k=>localStorage.removeItem(k));
+  S.user=null;S.tok=null;S.notes=[];S.folders=[];
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  closeSettings();
+}
+
+// ── APP START ──────────────────────────────────────
+async function startApp() {
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  const em = S.user?.email||'';
+  document.getElementById('sb-u').textContent=em;
+  document.getElementById('s-em').textContent=em;
+  await loadPrefs(); await loadFolders(); await loadNotes();
+  applyT();
+}
+
+// ── PREFS ──────────────────────────────────────────
+async function loadPrefs() {
+  const {data} = await api('GET',`/rest/v1/user_preferences?user_id=eq.${S.user.id}&select=*`);
+  if(Array.isArray(data)&&data.length>0){
+    const p=data[0]; S.prefs=p; S.lang=p.language||S.lang;
+    localStorage.setItem('zz_lang',S.lang);
+    document.getElementById('ss').value=p.sort_by||'updated_at';
+    document.getElementById('s-srt').value=p.sort_by||'updated_at';
+    if(p.view_mode==='list'){document.getElementById('nc').classList.add('lv');document.getElementById('vb').textContent='☰';document.getElementById('s-vw').value='list';}
+  }
+}
+
+async function savePref(upd) {
+  await api('POST','/rest/v1/user_preferences',{user_id:S.user.id,...upd,updated_at:new Date().toISOString()});
+}
+
+function chSort(v){S.prefs.sort_by=v;document.getElementById('ss').value=v;savePref({sort_by:v});renderNotes();}
+function onSort(){chSort(document.getElementById('ss').value);}
+function chView(v){
+  S.prefs.view_mode=v;
+  const c=document.getElementById('nc');
+  if(v==='list'){c.classList.add('lv');document.getElementById('vb').textContent='☰';}
+  else{c.classList.remove('lv');document.getElementById('vb').textContent='⊞';}
+  savePref({view_mode:v});
+}
+function togView(){const isG=!document.getElementById('nc').classList.contains('lv');chView(isG?'list':'grid');document.getElementById('s-vw').value=isG?'list':'grid';}
+
+// ── NOTES ──────────────────────────────────────────
+async function loadNotes() {
+  const {data}=await api('GET',`/rest/v1/notes?user_id=eq.${S.user.id}&select=*&order=updated_at.desc`);
+  S.notes=Array.isArray(data)?data:[];
+  renderNotes(); updateCnts();
+}
+
+async function saveNote() {
+  const title=document.getElementById('etitle').value.trim()||'—';
+  const content=document.getElementById('ec').innerHTML;
+  const cat=document.getElementById('ecat').value.trim();
+  const remV=document.getElementById('erem').value;
+  const color=document.getElementById('nclr').value;
+  const isPinned=document.getElementById('epin').classList.contains('on');
+  const note={...(S.editing||{}),title,content,tags:S.tags,category:cat,reminder_at:remV?new Date(remV).toISOString():null,color,is_pinned:isPinned,is_archived:S.editing?.is_archived||false,is_deleted:false};
+  if(note.id){
+    const {id,...body}=note; body.updated_at=new Date().toISOString();
+    await api('PATCH',`/rest/v1/notes?id=eq.${id}`,body);
+    const i=S.notes.findIndex(n=>n.id===id);
+    if(i>=0)S.notes[i]={...S.notes[i],...body,id};
+  } else {
+    const body={...note,user_id:S.user.id,created_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+    const {data}=await api('POST','/rest/v1/notes',body);
+    if(Array.isArray(data)&&data.length>0)S.notes.unshift(data[0]);
+    else S.notes.unshift({...body,id:Date.now()+''});
+  }
+  renderNotes(); updateCnts(); closeEd(); toast(t('saved'),'ok');
+}
+
+async function delNote(id) {
+  const n=S.notes.find(n=>n.id===id);
+  if(!n)return;
+  if(n.is_deleted){await api('DELETE',`/rest/v1/notes?id=eq.${id}`);S.notes=S.notes.filter(n=>n.id!==id);}
+  else{await api('PATCH',`/rest/v1/notes?id=eq.${id}`,{is_deleted:true,updated_at:new Date().toISOString()});n.is_deleted=true;}
+  renderNotes(); updateCnts(); toast(t('deleted'),'ok');
+}
+
+// ── RENDER ─────────────────────────────────────────
+function filtNotes() {
+  let ns=S.notes.filter(n=>{
+    if(S.filt==='del') return n.is_deleted;
+    if(n.is_deleted) return false;
+    if(S.filt==='pin') return n.is_pinned;
+    if(S.filt==='arc') return n.is_archived;
+    if(S.filt==='rem') return !!n.reminder_at;
+    return !n.is_archived;
+  });
+  if(S.q){const q=S.q.toLowerCase();ns=ns.filter(n=>(n.title||'').toLowerCase().includes(q)||(n.content||'').replace(/<[^>]*>/g,'').toLowerCase().includes(q)||(n.tags||[]).some(t=>t.toLowerCase().includes(q)));}
+  const srt=S.prefs.sort_by||'updated_at';
+  ns.sort((a,b)=>srt==='title'?(a.title||'').localeCompare(b.title||''):new Date(b[srt]||0)-new Date(a[srt]||0));
+  ns.sort((a,b)=>(b.is_pinned?1:0)-(a.is_pinned?1:0));
+  return ns;
+}
+
+function renderNotes() {
+  const ns=filtNotes();
+  document.getElementById('stats-t').textContent=t('cnt',ns.length);
+  if(!ns.length){
+    document.getElementById('nc').innerHTML=`<div class="empty"><div class="empty-ic">📝</div><div class="empty-txt">${t('noN')}</div><div class="empty-sub">${t('noNH')}</div></div>`;
+    return;
+  }
+  document.getElementById('nc').innerHTML=ns.map(n=>{
+    const pt=(n.content||'').replace(/<[^>]*>/g,'').substring(0,200);
+    const dt=fmtDate(n.updated_at);
+    const tags=(n.tags||[]).slice(0,3).map(tg=>`<span class="nc-tag">${esc(tg)}</span>`).join('');
+    const cb=n.color&&n.color!=='#2a2a2a'?`<div class="nc-color" style="background:${n.color}"></div>`:'';
+    const rm=n.reminder_at?`<span class="nc-tag" style="color:var(--warn)">⏰ ${fmtDate(n.reminder_at)}</span>`:'';
+    return `<div class="nc${n.is_pinned?' pinned':''}" onclick="openNote('${n.id}')" oncontextmenu="showCtx(event,'${n.id}')">
+      ${cb}
+      ${n.is_pinned?'<div class="nc-pin-badge">📌</div>':''}
+      <div class="nc-acts">
+        <div class="nc-act" onclick="event.stopPropagation();qPin('${n.id}')" title="${t('pinV')}">📌</div>
+        <div class="nc-act d" onclick="event.stopPropagation();openDM('${n.id}')" title="${t('delete')}">🗑</div>
+      </div>
+      <div class="nc-title">${esc(n.title)||'—'}</div>
+      ${pt?`<div class="nc-preview">${esc(pt)}</div>`:''}
+      <div class="nc-meta"><span class="nc-date">${dt}</span>${n.category?`<span class="nc-tag" style="background:var(--bg5)">${esc(n.category)}</span>`:''} ${tags}${rm}</div>
+    </div>`;
+  }).join('');
+}
+
+function updateCnts() {
+  const live=S.notes.filter(n=>!n.is_deleted);
+  document.getElementById('c-all').textContent=live.filter(n=>!n.is_archived).length;
+  document.getElementById('c-pin').textContent=live.filter(n=>n.is_pinned).length;
+  document.getElementById('c-rem').textContent=live.filter(n=>n.reminder_at).length;
+  document.getElementById('c-arc').textContent=live.filter(n=>n.is_archived).length;
+  document.getElementById('c-del').textContent=S.notes.filter(n=>n.is_deleted).length;
+}
+
+function fmtDate(iso) {
+  if(!iso)return'';
+  const d=new Date(iso),now=new Date(),diff=(now-d)/1000;
+  const just={ru:'только что',en:'just now',es:'ahora',zh:'刚刚'};
+  if(diff<60)return just[S.lang]||'только что';
+  if(diff<3600){const m=Math.floor(diff/60);return S.lang==='zh'?`${m}分钟前`:S.lang==='es'?`hace ${m}m`:S.lang==='en'?`${m}m ago`:`${m} мин`;}
+  if(diff<86400){const h=Math.floor(diff/3600);return S.lang==='zh'?`${h}小时前`:S.lang==='es'?`hace ${h}h`:S.lang==='en'?`${h}h ago`:`${h} ч`;}
+  const loc={ru:'ru-RU',en:'en-GB',es:'es-ES',zh:'zh-CN'};
+  return d.toLocaleDateString(loc[S.lang]||'ru-RU',{day:'numeric',month:'short'});
+}
+
+// ── FILTER ─────────────────────────────────────────
+const filtTitles={all:'all',pin:'pin',rem:'rem',arc:'arc',del:'del'};
+function sf(f) {
+  S.filt=f; S.fFolder=null;
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('on'));
+  document.getElementById('n-'+f)?.classList.add('on');
+  document.getElementById('tb-ttl').textContent=t(filtTitles[f]||'all');
+  renderNotes();
+}
+function onSrch(){S.q=document.getElementById('si').value;renderNotes();}
+
+// ── EDITOR ─────────────────────────────────────────
+function openNew() {
+  S.editing=null;S.tags=[];
+  document.getElementById('etitle').value='';
+  document.getElementById('ec').innerHTML='';
+  document.getElementById('ecat').value='';
+  document.getElementById('erem').value='';
+  document.getElementById('epin').classList.remove('on');
+  document.getElementById('nclr').value='#2a2a2a';
+  document.getElementById('etags').innerHTML='';
+  updChars();
+  document.getElementById('eo').classList.add('open');
+  document.getElementById('etitle').focus();
+}
+
+function openNote(id) {
+  const n=S.notes.find(n=>n.id===id);
+  if(!n)return;
+  S.editing={...n};S.tags=[...(n.tags||[])];
+  document.getElementById('etitle').value=n.title||'';
+  document.getElementById('ec').innerHTML=n.content||'';
+  document.getElementById('ecat').value=n.category||'';
+  if(n.reminder_at){const d=new Date(n.reminder_at);document.getElementById('erem').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
+  else document.getElementById('erem').value='';
+  document.getElementById('epin').classList.toggle('on',!!n.is_pinned);
+  document.getElementById('nclr').value=n.color||'#2a2a2a';
+  rdrTags(); updChars();
+  document.getElementById('eo').classList.add('open');
+  document.getElementById('etitle').focus();
+}
+
+function closeEd(){document.getElementById('eo').classList.remove('open');S.editing=null;}
+function togPin(){document.getElementById('epin').classList.toggle('on');}
+function updChars(){const txt=document.getElementById('ec').innerText||'';document.getElementById('echars').textContent=t('chars',txt.length);}
+function edKey(e){if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();saveNote();}updChars();}
+function f(cmd,su=false,v=null){document.getElementById('ec').focus();document.execCommand(cmd,su,v);}
+function fb(tag){document.getElementById('ec').focus();document.execCommand('formatBlock',false,tag);}
+function inHR(){document.getElementById('ec').focus();document.execCommand('insertHTML',false,'<hr style="border:none;border-top:1px solid #3a3a3a;margin:12px 0">');}
+function inCode(){document.getElementById('ec').focus();document.execCommand('insertHTML',false,'<code style="background:#222;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px">code</code>');}
+function inLink(){const u=prompt('URL:');if(u){document.getElementById('ec').focus();document.execCommand('createLink',false,u);}}
+
+// ── TAGS ───────────────────────────────────────────
+function tagKD(e) {
+  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=document.getElementById('tgi').value.trim().replace(/^#/,'');if(v&&!S.tags.includes(v)){S.tags.push(v);rdrTags();}document.getElementById('tgi').value='';}
+}
+function rdrTags(){document.getElementById('etags').innerHTML=S.tags.map((tg,i)=>`<div class="etag">#${esc(tg)}<span class="etag-x" onclick="rmTag(${i})">✕</span></div>`).join('');}
+function rmTag(i){S.tags.splice(i,1);rdrTags();}
+
+// ── FOLDERS ────────────────────────────────────────
+async function loadFolders() {
+  const {data}=await api('GET',`/rest/v1/folders?user_id=eq.${S.user.id}&select=*&order=created_at.asc`);
+  S.folders=Array.isArray(data)?data:[];
+  rdrFolders();
+}
+function rdrFolders() {
+  document.getElementById('flist').innerHTML=S.folders.map(f=>`<div class="sb-item" id="fn-${f.id}" onclick="setFF('${f.id}')" oncontextmenu="showFCtx(event,'${f.id}')"><span class="sb-item-ic">${f.icon||'📁'}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span></div>`).join('');
+}
+function setFF(id){S.filt='folder';S.fFolder=id;document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('on'));document.getElementById('fn-'+id)?.classList.add('on');const f=S.folders.find(f=>f.id===id);document.getElementById('tb-ttl').textContent=f?.name||'';renderNotes();}
+function openFolderModal(){document.getElementById('fn-i').value='';document.getElementById('fi-i').value='📁';document.getElementById('fc-i').value='#555555';document.getElementById('fm').classList.add('open');document.getElementById('fn-i').focus();}
+function closeFM(){document.getElementById('fm').classList.remove('open');}
+async function saveFM(){
+  const n=document.getElementById('fn-i').value.trim();if(!n)return;
+  const ic=document.getElementById('fi-i').value.trim()||'📁';
+  const cl=document.getElementById('fc-i').value;
+  const {data}=await api('POST','/rest/v1/folders',{user_id:S.user.id,name:n,icon:ic,color:cl,created_at:new Date().toISOString()});
+  if(Array.isArray(data)&&data.length>0)S.folders.push(data[0]);
+  rdrFolders();closeFM();
+}
+
+// ── QUICK ACTIONS ──────────────────────────────────
+async function qPin(id){const n=S.notes.find(n=>n.id===id);if(!n)return;const v=!n.is_pinned;await api('PATCH',`/rest/v1/notes?id=eq.${id}`,{is_pinned:v,updated_at:new Date().toISOString()});n.is_pinned=v;renderNotes();updateCnts();toast(v?t('pinned'):t('unpinned'));}
+async function qArc(id){const n=S.notes.find(n=>n.id===id);if(!n)return;const v=!n.is_archived;await api('PATCH',`/rest/v1/notes?id=eq.${id}`,{is_archived:v,updated_at:new Date().toISOString()});n.is_archived=v;renderNotes();updateCnts();toast(v?t('arcd'):t('unarcd'));}
+async function dupNote(id){const n=S.notes.find(n=>n.id===id);if(!n)return;const {id:_,created_at,updated_at,...rest}=n;rest.title=(rest.title||'')+'(2)';const {data}=await api('POST','/rest/v1/notes',{...rest,user_id:S.user.id,created_at:new Date().toISOString(),updated_at:new Date().toISOString()});if(Array.isArray(data)&&data.length>0)S.notes.unshift(data[0]);renderNotes();updateCnts();toast(t('duped'));}
+
+// ── CTX MENU ───────────────────────────────────────
+function showCtx(e,id){e.preventDefault();S.ctxId=id;const m=document.getElementById('ctx');m.style.display='block';m.style.left=Math.min(e.clientX,window.innerWidth-170)+'px';m.style.top=Math.min(e.clientY,window.innerHeight-200)+'px';}
+function showFCtx(e,id){e.preventDefault();}
+function ca(a){const id=S.ctxId;document.getElementById('ctx').style.display='none';if(!id)return;if(a==='ed')openNote(id);else if(a==='pin')qPin(id);else if(a==='arc')qArc(id);else if(a==='exp')expSingle(id);else if(a==='dup')dupNote(id);else if(a==='del')openDM(id);}
+document.addEventListener('click',()=>{document.getElementById('ctx').style.display='none';});
+
+// ── DELETE MODAL ───────────────────────────────────
+function openDM(id){S.delId=id;document.getElementById('dm').classList.add('open');}
+function closeDM(){document.getElementById('dm').classList.remove('open');S.delId=null;}
+async function confirmDel(){await delNote(S.delId);closeDM();}
+
+// ── SETTINGS ──────────────────────────────────────
+function openSettings(){document.getElementById('so').classList.add('open');}
+function closeSettings(){document.getElementById('so').classList.remove('open');}
+
+// ── TRASH ──────────────────────────────────────────
+async function emptyTrash(){const tr=S.notes.filter(n=>n.is_deleted);for(const n of tr)await api('DELETE',`/rest/v1/notes?id=eq.${n.id}`);S.notes=S.notes.filter(n=>!n.is_deleted);renderNotes();updateCnts();toast(t('trEmpty'),'ok');}
+
+// ── ZIP ────────────────────────────────────────────
+async function exportAll(){const ns=S.notes.filter(n=>!n.is_deleted);await mkZip(ns,'zigzag-export.zip');toast(t('exported'),'ok');}
+async function expSingle(id){const n=S.notes.find(n=>n.id===id);if(!n)return;const st=(n.title||'note').replace(/[^a-zA-Zа-яА-Я0-9]/g,'_').substring(0,30);await mkZip([n],`zigzag-${st}.zip`);toast(t('exported'),'ok');}
+
+async function mkZip(notes,fname){
+  if(typeof JSZip==='undefined'){toast('JSZip not loaded','er');return;}
+  const zip=new JSZip();const fl=zip.folder('notes');
+  for(const n of notes){
+    const st=(n.title||'note').replace(/[^a-zA-Zа-яА-Я0-9]/g,'_').substring(0,30)+'_'+(n.id||'x').toString().slice(-5);
+    const meta={id:n.id,title:n.title,content:n.content,tags:n.tags,category:n.category,color:n.color,is_pinned:n.is_pinned,is_archived:n.is_archived,reminder_at:n.reminder_at,created_at:n.created_at,updated_at:n.updated_at};
+    const js=`#!/usr/bin/env node
+// Zigzag Notes Export — ${new Date().toISOString()}
+// =============================================
+const note = ${JSON.stringify(meta,null,2)};
+
+console.log('=== ' + note.title + ' ===');
+console.log('Tags:', (note.tags||[]).join(', '));
+console.log('Created:', note.created_at);
+console.log('Updated:', note.updated_at);
+console.log('---');
+console.log(note.content.replace(/<[^>]*>/g,''));
+
+module.exports = note;
+`;
+    fl.file(`${st}.json`,JSON.stringify(meta,null,2));
+    fl.file(`${st}.js`,js);
+    fl.file(`${st}.txt`,(n.title||'')+'\n'+'='.repeat(40)+'\n'+(n.content||'').replace(/<[^>]*>/g,''));
+  }
+  zip.file('manifest.json',JSON.stringify({app:'Zigzag Notes',version:'1.0',exported_at:new Date().toISOString(),notes_count:notes.length,notes:notes.map(n=>({id:n.id,title:n.title,updated_at:n.updated_at}))},null,2));
+  zip.file('README.md',`# Zigzag Notes Export\n\nExported: ${new Date().toLocaleString()}\nNotes: ${notes.length}\n\n## Import\nOpen Zigzag Notes → 📥 → select this file.\n\n## Files\n- \`notes/*.json\` — metadata\n- \`notes/*.js\` — importable script\n- \`notes/*.txt\` — plain text\n`);
+  const blob=await zip.generateAsync({type:'blob'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fname;a.click();URL.revokeObjectURL(url);
+}
+
+function doImport(){document.getElementById('zip-fi').click();}
+async function handleZip(e){
+  const file=e.target.files[0];if(!file)return;
+  if(typeof JSZip==='undefined'){toast('JSZip not loaded','er');return;}
+  try{
+    const zip=await JSZip.loadAsync(file);
+    const mf=zip.file('manifest.json');let cnt=0;
+    if(mf){
+      const m=JSON.parse(await mf.async('text'));
+      for(const ni of(m.notes||[])){
+        const st=(ni.title||'note').replace(/[^a-zA-Zа-яА-Я0-9]/g,'_').substring(0,30)+'_'+(ni.id||'').toString().slice(-5);
+        const jf=zip.file(`notes/${st}.json`);
+        if(jf){try{const txt=await jf.async('text');const nd=JSON.parse(txt);const {id:_,...rest}=nd;const {data}=await api('POST','/rest/v1/notes',{...rest,user_id:S.user.id,created_at:new Date().toISOString(),updated_at:new Date().toISOString()});if(Array.isArray(data)&&data.length>0)S.notes.unshift(data[0]);cnt++;}catch(err){}}
+      }
+    }else{
+      const jf=Object.keys(zip.files).filter(f=>f.endsWith('.json'));
+      for(const fn of jf){try{const txt=await zip.file(fn).async('text');const nd=JSON.parse(txt);if(nd.title!==undefined){const {id:_,...rest}=nd;const {data}=await api('POST','/rest/v1/notes',{...rest,user_id:S.user.id,created_at:new Date().toISOString(),updated_at:new Date().toISOString()});if(Array.isArray(data)&&data.length>0)S.notes.unshift(data[0]);cnt++;}}catch(er){}}
+    }
+    renderNotes();updateCnts();toast(t('imported',cnt),'ok');
+  }catch(er){toast('Import error: '+er.message,'er');}
+  e.target.value='';
+}
+
+// ── TOAST ──────────────────────────────────────────
+function toast(msg,type=''){const el=document.createElement('div');el.className='toast'+(type?' '+type:'');const ic=type==='ok'?'✅':type==='er'?'❌':'ℹ️';el.innerHTML=`<span>${ic}</span> ${esc(msg)}`;document.getElementById('toast-c').appendChild(el);setTimeout(()=>el.remove(),3000);}
+
+// ── CLOSE OVERLAYS ON BG CLICK ─────────────────────
+document.getElementById('eo').addEventListener('click',function(e){if(e.target===this)closeEd();});
+['fm','dm','so'].forEach(id=>{document.getElementById(id)?.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});});
+
+// ── INIT ───────────────────────────────────────────
+applyT();
+tryAuto().then(ok=>{if(!ok)document.getElementById('auth-screen').style.display='flex';});
+</script>
+</body>
+</html>
