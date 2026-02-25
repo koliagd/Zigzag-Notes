@@ -16,88 +16,219 @@
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif; overflow: hidden; }
 
   /* AUTH */
-  #auth-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-  .auth-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 44px 40px; width: 400px; max-width: 95vw; }
-  .auth-logo { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-  .auth-logo em { color: var(--text3); font-style: normal; }
-  .auth-sub { font-size: 13px; color: var(--text3); margin-bottom: 28px; }
-  .lang-row { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
-  .lang-chip { padding: 4px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; cursor: pointer; color: var(--text2); transition: all 0.15s; }
-  .lang-chip.on { background: var(--bg5); color: var(--text); border-color: var(--border2); }
-  .auth-tabs { display: flex; gap: 2px; background: var(--bg3); border-radius: var(--radius); padding: 3px; margin-bottom: 24px; }
+  #auth-screen {
+    position: fixed; inset: 0; z-index: 9999;
+    display: flex; align-items: stretch;
+    background: var(--bg);
+  }
+  .auth-left {
+    flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    padding: 64px 72px; position: relative; overflow: hidden;
+  }
+  .auth-left::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, #232323 0%, #111 60%);
+    z-index: 0;
+  }
+  .auth-left-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px; opacity: 0.4;
+  }
+  .auth-brand { position: relative; z-index: 1; }
+  .auth-brand-logo {
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 48px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .auth-brand-logo::before { content: ''; display: block; width: 20px; height: 1px; background: var(--text3); }
+  .auth-hero {
+    font-family: 'Space Mono', monospace; font-size: clamp(32px, 4vw, 52px); font-weight: 700;
+    color: var(--text); line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px;
+  }
+  .auth-hero em { color: var(--text3); font-style: normal; display: block; }
+  .auth-tagline { font-size: 14px; color: var(--text3); line-height: 1.6; max-width: 320px; }
+  .auth-features { margin-top: 48px; display: flex; flex-direction: column; gap: 12px; }
+  .auth-feat { display: flex; align-items: center; gap: 12px; color: var(--text2); font-size: 13px; }
+  .auth-feat-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
+
+  .auth-right {
+    width: 420px; min-width: 380px; background: var(--bg2);
+    border-left: 1px solid var(--border); display: flex; flex-direction: column;
+    justify-content: center; padding: 48px 40px;
+  }
+  .auth-right-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .auth-right-sub { font-size: 13px; color: var(--text3); margin-bottom: 32px; }
+  .lang-row { display: flex; gap: 5px; margin-bottom: 28px; flex-wrap: wrap; }
+  .lang-chip { padding: 4px 11px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; font-size: 11px; cursor: pointer; color: var(--text3); transition: all 0.15s; font-weight: 600; }
+  .lang-chip.on { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+  .lang-chip:hover { color: var(--text2); border-color: var(--border2); }
+  .auth-tabs { display: flex; gap: 0; background: var(--bg3); border-radius: var(--radius); padding: 3px; margin-bottom: 24px; }
   .auth-tab { flex: 1; padding: 8px; text-align: center; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; color: var(--text3); transition: all 0.15s; }
   .auth-tab.on { background: var(--bg5); color: var(--text); }
   .auth-field { margin-bottom: 14px; }
-  .auth-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .auth-field input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 14px; font-family: 'Manrope',sans-serif; outline: none; transition: border-color 0.2s; }
-  .auth-field input:focus { border-color: var(--border2); }
-  .auth-btn { width: 100%; padding: 12px; background: var(--bg5); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Manrope',sans-serif; margin-top: 4px; }
+  .auth-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
+  .auth-field input {
+    width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text); font-size: 14px; font-family: 'Manrope',sans-serif;
+    outline: none; transition: border-color 0.2s;
+  }
+  .auth-field input:focus { border-color: var(--border2); background: var(--bg4); }
+  .auth-btn {
+    width: 100%; padding: 11px; background: var(--bg5); border: 1px solid var(--border2);
+    border-radius: var(--radius); color: var(--text); font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; font-family: 'Manrope',sans-serif; margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
   .auth-btn:hover { background: var(--border2); }
   .auth-err { color: var(--danger); font-size: 12px; margin-top: 10px; display: none; }
+
+  @media (max-width: 768px) {
+    .auth-left { display: none; }
+    .auth-right { width: 100%; min-width: unset; border-left: none; }
+  }
 
   /* LAYOUT */
   #app { display: flex; height: 100vh; display: none; }
 
   /* SIDEBAR */
-  #sidebar { width: 230px; min-width: 230px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-  .sb-head { padding: 18px 14px 14px; border-bottom: 1px solid var(--border); }
-  .sb-logo { font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text); }
-  .sb-logo em { color: var(--text3); font-style: normal; }
-  .sb-user { font-size: 11px; color: var(--text3); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .sb-sec { padding: 12px 6px 2px; }
-  .sb-sec-lbl { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin-bottom: 2px; }
-  .sb-item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 7px; cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 500; transition: all 0.12s; user-select: none; }
-  .sb-item:hover { background: var(--bg3); color: var(--text); }
-  .sb-item.on { background: var(--bg4); color: var(--text); }
-  .sb-item-ic { font-size: 14px; width: 20px; text-align: center; }
-  .sb-cnt { margin-left: auto; font-size: 11px; background: var(--bg4); padding: 1px 6px; border-radius: 8px; color: var(--text3); }
+  #sidebar { width: 220px; min-width: 220px; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .sb-head { padding: 20px 14px 16px; border-bottom: 1px solid var(--border); }
+  .sb-logo { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text3); letter-spacing: 0.5px; }
+  .sb-logo em { color: var(--border2); font-style: normal; }
+  .sb-user { font-size: 11px; color: var(--text3); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.7; }
+  .sb-sec { padding: 16px 6px 2px; }
+  .sb-sec-lbl { font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; padding: 0 10px; margin-bottom: 4px; opacity: 0.7; }
+  .sb-item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--text3); font-size: 12px; font-weight: 500; transition: all 0.12s; user-select: none; }
+  .sb-item:hover { background: var(--bg2); color: var(--text2); }
+  .sb-item.on { background: var(--bg3); color: var(--text); }
+  .sb-item-ic { font-size: 13px; width: 18px; text-align: center; opacity: 0.7; }
+  .sb-item.on .sb-item-ic { opacity: 1; }
+  .sb-cnt { margin-left: auto; font-size: 10px; color: var(--text3); font-family: 'Space Mono', monospace; }
+  .sb-item.on .sb-cnt { color: var(--text2); }
   .sb-folders { flex: 1; overflow-y: auto; padding-bottom: 6px; }
   .sb-folders::-webkit-scrollbar { width: 3px; }
-  .sb-folders::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+  .sb-folders::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
   .sb-bot { border-top: 1px solid var(--border); padding: 8px; }
-  .add-folder-btn { width: 100%; padding: 7px 10px; background: none; border: 1px dashed var(--border); border-radius: 7px; color: var(--text3); font-size: 12px; cursor: pointer; transition: all 0.15s; font-family: 'Manrope',sans-serif; display: flex; align-items: center; gap: 6px; }
-  .add-folder-btn:hover { border-color: var(--border2); color: var(--text2); background: var(--bg3); }
+  .add-folder-btn { width: 100%; padding: 7px 10px; background: none; border: 1px dashed var(--border); border-radius: 6px; color: var(--text3); font-size: 11px; cursor: pointer; transition: all 0.15s; font-family: 'Manrope',sans-serif; display: flex; align-items: center; gap: 6px; }
+  .add-folder-btn:hover { border-color: var(--border2); color: var(--text2); }
 
   /* MAIN */
-  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  #topbar { display: flex; align-items: center; gap: 10px; padding: 13px 18px; border-bottom: 1px solid var(--border); background: var(--bg); }
-  .tb-title { font-size: 17px; font-weight: 800; color: var(--text); flex: 1; }
-  .tb-search { display: flex; align-items: center; gap: 8px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 12px; width: 220px; transition: all 0.2s; }
-  .tb-search:focus-within { border-color: var(--border2); width: 280px; }
-  .tb-search input { background: none; border: none; outline: none; color: var(--text); font-size: 13px; font-family: 'Manrope',sans-serif; width: 100%; }
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+
+  /* HERO BANNER — minimalist */
+  #hero-banner {
+    padding: 32px 28px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    position: relative;
+  }
+  /* subtle grain texture overlay */
+  #hero-banner::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+  .hero-top {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+    position: relative; z-index: 1;
+  }
+  .hero-brand { display: flex; flex-direction: column; gap: 6px; }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+    color: var(--text3); text-transform: uppercase; letter-spacing: 3px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-eyebrow::before { content: ''; display: block; width: 16px; height: 1px; background: var(--text3); }
+  .hero-wordmark {
+    font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700;
+    color: var(--text); letter-spacing: -1px; line-height: 1; display: flex; align-items: baseline; gap: 8px;
+  }
+  .hero-wordmark em { color: var(--text3); font-style: normal; font-size: 18px; letter-spacing: -0.5px; }
+  .hero-wordmark .hw-slash { color: var(--border2); font-size: 20px; margin: 0 -2px; }
+  .hero-tagline {
+    font-size: 11px; color: var(--text3); letter-spacing: 0.2px; margin-top: 2px;
+    font-weight: 500;
+  }
+  .hero-actions { display: flex; align-items: center; gap: 6px; padding-top: 4px; }
+  .hero-divider {
+    height: 1px; background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    margin-top: 20px; position: relative; z-index: 1;
+  }
+
+  /* TOOLBAR */
+  #topbar {
+    display: flex; align-items: center; gap: 8px; padding: 10px 28px;
+    border-bottom: 1px solid var(--border); background: var(--bg);
+  }
+  .tb-title { font-size: 12px; font-weight: 600; color: var(--text3); flex: 1; letter-spacing: 0.2px; }
+  .tb-search {
+    display: flex; align-items: center; gap: 7px; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 11px;
+    width: 190px; transition: all 0.2s;
+  }
+  .tb-search:focus-within { border-color: var(--border2); width: 250px; }
+  .tb-search input { background: none; border: none; outline: none; color: var(--text); font-size: 12px; font-family: 'Manrope',sans-serif; width: 100%; }
   .tb-search input::placeholder { color: var(--text3); }
-  .ib { width: 34px; height: 34px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.15s; font-size: 15px; flex-shrink: 0; }
-  .ib:hover { background: var(--bg4); color: var(--text); border-color: var(--border2); }
-  .sort-sel { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-size: 12px; padding: 7px 9px; outline: none; font-family: 'Manrope',sans-serif; cursor: pointer; }
-  #stats-bar { display: flex; gap: 14px; padding: 7px 18px; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--text3); }
+  .tb-search svg { opacity: 0.35; flex-shrink: 0; }
+  .ib {
+    width: 32px; height: 32px; background: none; border: 1px solid var(--border);
+    border-radius: var(--radius); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; color: var(--text3); transition: all 0.15s; font-size: 14px; flex-shrink: 0;
+  }
+  .ib:hover { background: var(--bg2); color: var(--text2); border-color: var(--border2); }
+  .ib.primary {
+    background: var(--bg3); border-color: var(--border2); color: var(--text);
+    padding: 0 14px; width: auto; font-family: 'Manrope',sans-serif;
+    font-weight: 700; font-size: 12px; gap: 5px; letter-spacing: 0.2px;
+  }
+  .ib.primary:hover { background: var(--bg4); }
+  .sort-sel {
+    background: none; border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text3); font-size: 11px; padding: 6px 8px; outline: none;
+    font-family: 'Manrope',sans-serif; cursor: pointer;
+  }
+  .sort-sel:hover { border-color: var(--border2); color: var(--text2); }
+  #stats-bar {
+    padding: 5px 28px; font-size: 10px; color: var(--text3);
+    border-bottom: 1px solid var(--border); letter-spacing: 0.5px;
+    font-family: 'Space Mono', monospace; opacity: 0.7;
+  }
 
   /* NOTES */
-  #notes-area { flex: 1; overflow-y: auto; padding: 18px; }
-  #notes-area::-webkit-scrollbar { width: 5px; }
-  #notes-area::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
-  #nc { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 11px; }
+  #notes-area { flex: 1; overflow-y: auto; padding: 20px 28px; }
+  #notes-area::-webkit-scrollbar { width: 4px; }
+  #notes-area::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+  #nc { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
   #nc.lv { grid-template-columns: 1fr; }
-  .nc { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 15px; cursor: pointer; transition: all 0.18s; position: relative; display: flex; flex-direction: column; gap: 7px; animation: fi 0.18s ease; overflow: hidden; }
-  @keyframes fi { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-  .nc:hover { border-color: var(--border2); background: var(--bg3); transform: translateY(-1px); }
-  .nc.pinned { border-color: #3a3020; }
-  .nc-color { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
-  .nc-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; padding-right: 36px; }
-  .nc-preview { font-size: 12px; color: var(--text2); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .nc-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: auto; }
-  .nc-date { font-size: 11px; color: var(--text3); }
-  .nc-tag { font-size: 10px; background: var(--bg4); color: var(--text3); padding: 2px 6px; border-radius: 8px; }
-  .nc-pin-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; opacity: 0.7; }
+  .nc {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    position: relative; display: flex; flex-direction: column; gap: 8px;
+    animation: fi 0.15s ease; overflow: hidden;
+  }
+  @keyframes fi { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .nc:hover { border-color: var(--border2); background: var(--bg3); }
+  .nc.pinned { border-left: 2px solid var(--border2); }
+  .nc-color { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; }
+  .nc-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.45; padding-right: 32px; }
+  .nc-preview { font-size: 12px; color: var(--text3); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .nc-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; border-top: 1px solid var(--border); }
+  .nc-date { font-size: 10px; color: var(--text3); font-family: 'Space Mono', monospace; flex: 1; }
+  .nc-tag { font-size: 10px; color: var(--text3); }
+  .nc-tag::before { content: '#'; }
+  .nc-pin-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; opacity: 0.4; }
   .nc-acts { display: none; position: absolute; top: 8px; right: 8px; gap: 3px; }
   .nc:hover .nc-acts { display: flex; }
-  .nc.pinned:hover .nc-acts { right: 26px; }
-  .nc-act { width: 24px; height: 24px; background: var(--bg4); border: 1px solid var(--border); border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.12s; color: var(--text2); }
-  .nc-act:hover { background: var(--bg5); color: var(--text); }
-  .nc-act.d:hover { background: #2a1010; color: var(--danger); border-color: var(--danger); }
-  .empty { grid-column: 1/-1; text-align: center; padding: 60px 20px; }
-  .empty-ic { font-size: 44px; margin-bottom: 14px; opacity: 0.3; }
-  .empty-txt { font-size: 15px; color: var(--text2); font-weight: 600; }
-  .empty-sub { font-size: 12px; color: var(--text3); margin-top: 5px; }
+  .nc.pinned:hover .nc-acts { right: 24px; }
+  .nc-act { width: 22px; height: 22px; background: var(--bg4); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.12s; }
+  .nc-act:hover { background: var(--bg5); border-color: var(--border2); }
+  .nc-act.d:hover { background: #2a1010; border-color: var(--danger); }
+  .empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
+  .empty-ic { font-size: 32px; margin-bottom: 14px; opacity: 0.15; }
+  .empty-txt { font-size: 13px; color: var(--text3); font-weight: 600; margin-bottom: 4px; }
+  .empty-sub { font-size: 11px; color: var(--text3); opacity: 0.5; }
 
   /* EDITOR */
   #eo { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
@@ -191,15 +322,38 @@
     #sidebar { display: none; }
     #nc { grid-template-columns: 1fr; }
     #eb { width: 100%; height: 100%; border-radius: 0; }
+    .hero-wordmark { font-size: 20px; }
+    #hero-banner { padding: 18px 16px 14px; }
+    #notes-area { padding: 14px 16px; }
+    #topbar { padding: 8px 16px; }
+    #stats-bar { padding: 5px 16px; }
   }
 </style>
 </head>
 <body>
 
 <div id="auth-screen">
-  <div class="auth-box">
-    <div class="auth-logo">Zigzag <em>//</em> Notes</div>
-    <div class="auth-sub" id="a-tag">Умные заметки. Всегда под рукой.</div>
+  <!-- LEFT BRAND PANEL -->
+  <div class="auth-left">
+    <div class="auth-left-grid"></div>
+    <div class="auth-brand">
+      <div class="auth-brand-logo">Zigzag Notes</div>
+      <div class="auth-hero">
+        Умные<br>заметки<em>для всего.</em>
+      </div>
+      <div class="auth-tagline" id="a-tag">Всегда под рукой. Облачное сохранение, мощный редактор, экспорт в ZIP.</div>
+      <div class="auth-features">
+        <div class="auth-feat"><div class="auth-feat-dot"></div>Облачное сохранение и синхронизация</div>
+        <div class="auth-feat"><div class="auth-feat-dot"></div>Экспорт / импорт ZIP с JS-скриптами</div>
+        <div class="auth-feat"><div class="auth-feat-dot"></div>4 языка интерфейса</div>
+        <div class="auth-feat"><div class="auth-feat-dot"></div>Теги, папки, напоминания, архив</div>
+      </div>
+    </div>
+  </div>
+  <!-- RIGHT FORM PANEL -->
+  <div class="auth-right">
+    <div class="auth-right-title" id="ar-title">Добро пожаловать</div>
+    <div class="auth-right-sub" id="ar-sub">Войдите в аккаунт или создайте новый</div>
     <div class="lang-row">
       <div class="lang-chip on" data-l="ru" onclick="aLang('ru',this)">🇷🇺 Рус</div>
       <div class="lang-chip" data-l="en" onclick="aLang('en',this)">🇬🇧 Eng</div>
@@ -228,7 +382,7 @@
 <div id="app">
   <div id="sidebar">
     <div class="sb-head">
-      <div class="sb-logo">Zigzag <em>//</em></div>
+      <div class="sb-logo">ZZ <em>//</em> Notes</div>
       <div class="sb-user" id="sb-u">—</div>
     </div>
     <div class="sb-sec">
@@ -247,16 +401,39 @@
   </div>
 
   <div id="main">
+    <!-- HERO BANNER -->
+    <div id="hero-banner">
+      <div class="hero-top">
+        <div class="hero-brand">
+          <div class="hero-eyebrow">Zigzag Notes</div>
+          <div class="hero-wordmark">
+            Zigzag
+            <span class="hw-slash">//</span>
+            <em id="hero-wm-notes">Заметки</em>
+          </div>
+          <div class="hero-tagline" id="hero-sub-txt">Умные заметки. Всегда под рукой.</div>
+        </div>
+        <div class="hero-actions">
+          <div class="ib" onclick="doImport()" title="Импорт ZIP">📥</div>
+          <div class="ib" onclick="exportAll()" title="Экспорт ZIP">📤</div>
+          <div class="ib" onclick="openSettings()" title="Настройки">⚙️</div>
+          <div class="ib primary" onclick="openNew()">✏️ <span id="t-new-note">Новая</span></div>
+        </div>
+      </div>
+      <div class="hero-divider"></div>
+    </div>
+
+    <!-- TOOLBAR -->
     <div id="topbar">
       <div class="tb-title" id="tb-ttl">Все заметки</div>
-      <div class="tb-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" id="si" placeholder="Поиск..." oninput="onSrch()"></div>
+      <div class="tb-search">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="si" placeholder="Поиск..." oninput="onSrch()">
+      </div>
       <select class="sort-sel" id="ss" onchange="onSort()"><option value="updated_at" id="so-upd">По дате</option><option value="title" id="so-ttl">По названию</option><option value="created_at" id="so-cre">По созданию</option></select>
       <div class="ib" id="vb" onclick="togView()" title="Вид">⊞</div>
-      <div class="ib" onclick="openNew()" title="Новая заметка">✏️</div>
-      <div class="ib" onclick="doImport()" title="Импорт ZIP">📥</div>
-      <div class="ib" onclick="exportAll()" title="Экспорт ZIP">📤</div>
-      <div class="ib" onclick="openSettings()" title="Настройки">⚙️</div>
     </div>
+
     <div id="stats-bar"><span id="stats-t">0 заметок</span></div>
     <div id="notes-area"><div id="nc"></div></div>
   </div>
@@ -399,10 +576,10 @@ async function authApi(method, path, body) {
 
 // ── TRANSLATIONS ───────────────────────────────────
 const T = {
-  ru:{ tagline:'Умные заметки. Всегда под рукой.', login:'Войти', reg:'Регистрация', pw:'Пароль', cpw:'Подтвердите пароль', loginBtn:'Войти', regBtn:'Создать аккаунт', all:'Все заметки', pin:'Закреплённые', rem:'С напоминанием', arc:'Архив', del:'Корзина', nav:'Навигация', flds:'Папки', nf:'Новая папка', srch:'Поиск...', settings:'Настройки', save:'Сохранить', cancel:'Отмена', delete:'Удалить', delQ:'Удалить заметку?', delTxt:'Заметка будет перемещена в корзину.', edit:'Редактировать', pinV:'Закрепить', arcV:'Архивировать', expV:'Экспорт', dup:'Дублировать', acc:'Аккаунт', iface:'Интерфейс', lang:'Язык', sort:'Сортировка', view:'Вид', data:'Управление данными', expAll:'Экспорт заметок', expAllS:'Скачать ZIP архив', impN:'Импорт заметок', impS:'Загрузить ZIP архив', clrTr:'Очистить корзину', clrTrS:'Безвозвратное удаление', clr:'Очистить', exp:'Экспорт', imp:'Импорт', logout:'Выйти', fName:'Название', fIco:'Иконка', fClr:'Цвет', sUpd:'По дате', sTtl:'По названию', sCre:'По созданию', grd:'Сетка', lst:'Список', cnt:(n)=>`${n} заметок`, noN:'Нет заметок', noNH:'Нажмите ✏️ для создания', saved:'Сохранено', deleted:'Удалено', exported:'Экспорт выполнен', imported:(n)=>`Импортировано: ${n}`, trEmpty:'Корзина очищена', duped:'Дублировано', pinned:'Закреплено', unpinned:'Откреплено', arcd:'Архивировано', unarcd:'Извлечено', chars:(n)=>`${n} симв.` },
-  en:{ tagline:'Smart notes. Always at hand.', login:'Login', reg:'Register', pw:'Password', cpw:'Confirm password', loginBtn:'Log In', regBtn:'Create Account', all:'All Notes', pin:'Pinned', rem:'With Reminders', arc:'Archive', del:'Trash', nav:'Navigation', flds:'Folders', nf:'New Folder', srch:'Search...', settings:'Settings', save:'Save', cancel:'Cancel', delete:'Delete', delQ:'Delete note?', delTxt:'Note will be moved to trash.', edit:'Edit', pinV:'Pin', arcV:'Archive', expV:'Export', dup:'Duplicate', acc:'Account', iface:'Interface', lang:'Language', sort:'Sort by', view:'View', data:'Data Management', expAll:'Export notes', expAllS:'Download ZIP archive', impN:'Import notes', impS:'Upload ZIP archive', clrTr:'Empty trash', clrTrS:'Permanent delete', clr:'Clear', exp:'Export', imp:'Import', logout:'Logout', fName:'Name', fIco:'Icon', fClr:'Color', sUpd:'By date', sTtl:'By name', sCre:'By created', grd:'Grid', lst:'List', cnt:(n)=>`${n} notes`, noN:'No notes', noNH:'Click ✏️ to create', saved:'Saved', deleted:'Deleted', exported:'Exported', imported:(n)=>`Imported: ${n}`, trEmpty:'Trash cleared', duped:'Duplicated', pinned:'Pinned', unpinned:'Unpinned', arcd:'Archived', unarcd:'Unarchived', chars:(n)=>`${n} chars` },
-  es:{ tagline:'Notas inteligentes. Siempre a mano.', login:'Iniciar sesión', reg:'Registrarse', pw:'Contraseña', cpw:'Confirmar contraseña', loginBtn:'Entrar', regBtn:'Crear cuenta', all:'Todas las notas', pin:'Fijadas', rem:'Con recordatorios', arc:'Archivo', del:'Papelera', nav:'Navegación', flds:'Carpetas', nf:'Nueva carpeta', srch:'Buscar...', settings:'Ajustes', save:'Guardar', cancel:'Cancelar', delete:'Eliminar', delQ:'¿Eliminar nota?', delTxt:'La nota irá a la papelera.', edit:'Editar', pinV:'Fijar', arcV:'Archivar', expV:'Exportar', dup:'Duplicar', acc:'Cuenta', iface:'Interfaz', lang:'Idioma', sort:'Ordenar', view:'Vista', data:'Datos', expAll:'Exportar notas', expAllS:'Descargar ZIP', impN:'Importar notas', impS:'Cargar ZIP', clrTr:'Vaciar papelera', clrTrS:'Eliminación permanente', clr:'Limpiar', exp:'Exportar', imp:'Importar', logout:'Salir', fName:'Nombre', fIco:'Icono', fClr:'Color', sUpd:'Por fecha', sTtl:'Por nombre', sCre:'Por creación', grd:'Cuadrícula', lst:'Lista', cnt:(n)=>`${n} notas`, noN:'Sin notas', noNH:'Haz clic ✏️ para crear', saved:'Guardado', deleted:'Eliminado', exported:'Exportado', imported:(n)=>`Importado: ${n}`, trEmpty:'Papelera limpia', duped:'Duplicado', pinned:'Fijado', unpinned:'Desfijado', arcd:'Archivado', unarcd:'Desarchivado', chars:(n)=>`${n} car.` },
-  zh:{ tagline:'智能笔记，随时可用。', login:'登录', reg:'注册', pw:'密码', cpw:'确认密码', loginBtn:'登录', regBtn:'创建账户', all:'所有笔记', pin:'已置顶', rem:'有提醒', arc:'归档', del:'回收站', nav:'导航', flds:'文件夹', nf:'新文件夹', srch:'搜索...', settings:'设置', save:'保存', cancel:'取消', delete:'删除', delQ:'删除笔记？', delTxt:'笔记将移至回收站。', edit:'编辑', pinV:'置顶', arcV:'归档', expV:'导出', dup:'复制', acc:'账户', iface:'界面', lang:'语言', sort:'排序', view:'视图', data:'数据管理', expAll:'导出笔记', expAllS:'下载 ZIP 压缩包', impN:'导入笔记', impS:'上传 ZIP 压缩包', clrTr:'清空回收站', clrTrS:'永久删除', clr:'清空', exp:'导出', imp:'导入', logout:'退出', fName:'名称', fIco:'图标', fClr:'颜色', sUpd:'按日期', sTtl:'按名称', sCre:'按创建', grd:'网格', lst:'列表', cnt:(n)=>`${n} 条笔记`, noN:'没有笔记', noNH:'点击 ✏️ 创建', saved:'已保存', deleted:'已删除', exported:'已导出', imported:(n)=>`已导入: ${n}`, trEmpty:'回收站已清空', duped:'已复制', pinned:'已置顶', unpinned:'已取消置顶', arcd:'已归档', unarcd:'已取消归档', chars:(n)=>`${n} 字符` }
+  ru:{ tagline:'Умные заметки. Всегда под рукой.', login:'Войти', reg:'Регистрация', pw:'Пароль', cpw:'Подтвердите пароль', loginBtn:'Войти', regBtn:'Создать аккаунт', all:'Все заметки', pin:'Закреплённые', rem:'С напоминанием', arc:'Архив', del:'Корзина', nav:'Навигация', flds:'Папки', nf:'Новая папка', srch:'Поиск...', settings:'Настройки', save:'Сохранить', cancel:'Отмена', delete:'Удалить', delQ:'Удалить заметку?', delTxt:'Заметка будет перемещена в корзину.', edit:'Редактировать', pinV:'Закрепить', arcV:'Архивировать', expV:'Экспорт', dup:'Дублировать', acc:'Аккаунт', iface:'Интерфейс', lang:'Язык', sort:'Сортировка', view:'Вид', data:'Управление данными', expAll:'Экспорт заметок', expAllS:'Скачать ZIP архив', impN:'Импорт заметок', impS:'Загрузить ZIP архив', clrTr:'Очистить корзину', clrTrS:'Безвозвратное удаление', clr:'Очистить', exp:'Экспорт', imp:'Импорт', logout:'Выйти', fName:'Название', fIco:'Иконка', fClr:'Цвет', sUpd:'По дате', sTtl:'По названию', sCre:'По созданию', grd:'Сетка', lst:'Список', cnt:(n)=>`${n} заметок`, noN:'Нет заметок', noNH:'Нажмите «Новая» для создания', saved:'Сохранено', deleted:'Удалено', exported:'Экспорт выполнен', imported:(n)=>`Импортировано: ${n}`, trEmpty:'Корзина очищена', duped:'Дублировано', pinned:'Закреплено', unpinned:'Откреплено', arcd:'Архивировано', unarcd:'Извлечено', chars:(n)=>`${n} симв.`, newShort:'Новая', welcome:'Добро пожаловать', welcomeSub:'Войдите в аккаунт или создайте новый' },
+  en:{ tagline:'Smart notes. Always at hand.', login:'Login', reg:'Register', pw:'Password', cpw:'Confirm password', loginBtn:'Log In', regBtn:'Create Account', all:'All Notes', pin:'Pinned', rem:'With Reminders', arc:'Archive', del:'Trash', nav:'Navigation', flds:'Folders', nf:'New Folder', srch:'Search...', settings:'Settings', save:'Save', cancel:'Cancel', delete:'Delete', delQ:'Delete note?', delTxt:'Note will be moved to trash.', edit:'Edit', pinV:'Pin', arcV:'Archive', expV:'Export', dup:'Duplicate', acc:'Account', iface:'Interface', lang:'Language', sort:'Sort by', view:'View', data:'Data Management', expAll:'Export notes', expAllS:'Download ZIP archive', impN:'Import notes', impS:'Upload ZIP archive', clrTr:'Empty trash', clrTrS:'Permanent delete', clr:'Clear', exp:'Export', imp:'Import', logout:'Logout', fName:'Name', fIco:'Icon', fClr:'Color', sUpd:'By date', sTtl:'By name', sCre:'By created', grd:'Grid', lst:'List', cnt:(n)=>`${n} notes`, noN:'No notes', noNH:'Click "New" to create', saved:'Saved', deleted:'Deleted', exported:'Exported', imported:(n)=>`Imported: ${n}`, trEmpty:'Trash cleared', duped:'Duplicated', pinned:'Pinned', unpinned:'Unpinned', arcd:'Archived', unarcd:'Unarchived', chars:(n)=>`${n} chars`, newShort:'New', welcome:'Welcome', welcomeSub:'Sign in or create a new account' },
+  es:{ tagline:'Notas inteligentes. Siempre a mano.', login:'Iniciar sesión', reg:'Registrarse', pw:'Contraseña', cpw:'Confirmar contraseña', loginBtn:'Entrar', regBtn:'Crear cuenta', all:'Todas las notas', pin:'Fijadas', rem:'Con recordatorios', arc:'Archivo', del:'Papelera', nav:'Navegación', flds:'Carpetas', nf:'Nueva carpeta', srch:'Buscar...', settings:'Ajustes', save:'Guardar', cancel:'Cancelar', delete:'Eliminar', delQ:'¿Eliminar nota?', delTxt:'La nota irá a la papelera.', edit:'Editar', pinV:'Fijar', arcV:'Archivar', expV:'Exportar', dup:'Duplicar', acc:'Cuenta', iface:'Interfaz', lang:'Idioma', sort:'Ordenar', view:'Vista', data:'Datos', expAll:'Exportar notas', expAllS:'Descargar ZIP', impN:'Importar notas', impS:'Cargar ZIP', clrTr:'Vaciar papelera', clrTrS:'Eliminación permanente', clr:'Limpiar', exp:'Exportar', imp:'Importar', logout:'Salir', fName:'Nombre', fIco:'Icono', fClr:'Color', sUpd:'Por fecha', sTtl:'Por nombre', sCre:'Por creación', grd:'Cuadrícula', lst:'Lista', cnt:(n)=>`${n} notas`, noN:'Sin notas', noNH:'Clic en "Nueva" para crear', saved:'Guardado', deleted:'Eliminado', exported:'Exportado', imported:(n)=>`Importado: ${n}`, trEmpty:'Papelera limpia', duped:'Duplicado', pinned:'Fijado', unpinned:'Desfijado', arcd:'Archivado', unarcd:'Desarchivado', chars:(n)=>`${n} car.`, newShort:'Nueva', welcome:'Bienvenido', welcomeSub:'Inicia sesión o crea una cuenta' },
+  zh:{ tagline:'智能笔记，随时可用。', login:'登录', reg:'注册', pw:'密码', cpw:'确认密码', loginBtn:'登录', regBtn:'创建账户', all:'所有笔记', pin:'已置顶', rem:'有提醒', arc:'归档', del:'回收站', nav:'导航', flds:'文件夹', nf:'新文件夹', srch:'搜索...', settings:'设置', save:'保存', cancel:'取消', delete:'删除', delQ:'删除笔记？', delTxt:'笔记将移至回收站。', edit:'编辑', pinV:'置顶', arcV:'归档', expV:'导出', dup:'复制', acc:'账户', iface:'界面', lang:'语言', sort:'排序', view:'视图', data:'数据管理', expAll:'导出笔记', expAllS:'下载 ZIP 压缩包', impN:'导入笔记', impS:'上传 ZIP 压缩包', clrTr:'清空回收站', clrTrS:'永久删除', clr:'清空', exp:'导出', imp:'导入', logout:'退出', fName:'名称', fIco:'图标', fClr:'颜色', sUpd:'按日期', sTtl:'按名称', sCre:'按创建', grd:'网格', lst:'列表', cnt:(n)=>`${n} 条笔记`, noN:'没有笔记', noNH:'点击「新建」创建', saved:'已保存', deleted:'已删除', exported:'已导出', imported:(n)=>`已导入: ${n}`, trEmpty:'回收站已清空', duped:'已复制', pinned:'已置顶', unpinned:'已取消置顶', arcd:'已归档', unarcd:'已取消归档', chars:(n)=>`${n} 字符`, newShort:'新建', welcome:'欢迎', welcomeSub:'登录或创建新账户' }
 };
 
 function t(k,...a) { const l=T[S.lang]||T.ru; const v=l[k]||T.ru[k]||k; return typeof v==='function'?v(...a):v; }
@@ -419,7 +596,8 @@ const TM = {
   's-tr-l':'clrTr','s-tr-s':'clrTrS','s-tr-b':'clr','s-lo':'logout',
   'cx-ed':'edit','cx-pin':'pinV','cx-arc':'arcV','cx-exp':'expV','cx-dup':'dup','cx-del':'delete',
   'so-upd':'sUpd','so-ttl':'sTtl','so-cre':'sCre','ss-upd':'sUpd','ss-ttl':'sTtl','ss-cre':'sCre','sv-g':'grd','sv-l':'lst',
-  'esave-btn':'save'
+  'esave-btn':'save','t-new-note':'newShort','ar-title':'welcome','ar-sub':'welcomeSub',
+  'hero-sub-txt':'tagline'
 };
 const PH = { 'si':'srch','etitle':null,'ecat':null,'tgi':null };
 
@@ -430,9 +608,12 @@ function applyT() {
     el.textContent = t(key);
   }
   document.getElementById('si').placeholder = t('srch');
-  document.getElementById('etitle').placeholder = t('all').includes('Note') ? 'Title...' : 'Заголовок...';
+  document.getElementById('etitle').placeholder = t('all').includes('Note') ? 'Title...' : S.lang==='zh'?'标题...':S.lang==='es'?'Título...':'Заголовок...';
   const l = document.getElementById('ls');
   if(l) l.value = S.lang;
+  // update hero wordmark lang part
+  const hw = document.getElementById('hero-wm-notes');
+  if(hw) hw.textContent = {ru:'Заметки',en:'Notes',es:'Notas',zh:'笔记'}[S.lang]||'Заметки';
 }
 
 function aLang(lang, el) {
