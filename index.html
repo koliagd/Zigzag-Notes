@@ -7,19 +7,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #111111; --bg2: #181818; --bg3: #222222; --bg4: #2a2a2a; --bg5: #333333;
-    --border: #2e2e2e; --border2: #444444; --text: #e8e8e8; --text2: #999999; --text3: #555555;
-    --accent: #c8c8c8; --danger: #cc4444; --success: #44aa66; --warn: #aa8844; --pin: #d4aa44;
-    --radius: 8px; --radius2: 12px;
+    --bg: #202124; --bg2: #28292c; --bg3: #303134; --bg4: #3c3f43; --bg5: #48494d;
+    --border: #3c3f43; --border2: #5f6368; --text: #e8eaed; --text2: #bdc1c6; --text3: #9aa0a6;
+    --accent: #8ab4f8; --danger: #f28b82; --success: #81c995; --warn: #fdd663; --pin: #fdd663;
+    --radius: 8px; --radius2: 24px; --hh: 56px; --sbw: 280px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Manrope', sans-serif; overflow: hidden; }
 
-  /* AUTH */
+  /* ═══════════════════════════════════════
+     AUTH SCREEN
+  ═══════════════════════════════════════ */
   #auth-screen {
     position: fixed; inset: 0; z-index: 9999;
-    display: flex; align-items: stretch;
-    background: var(--bg);
+    display: flex; align-items: stretch; background: var(--bg);
   }
   .auth-left {
     flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
@@ -27,8 +28,7 @@
   }
   .auth-left::before {
     content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 20% 50%, #232323 0%, #111 60%);
-    z-index: 0;
+    background: radial-gradient(ellipse at 20% 50%, #232323 0%, #111 60%); z-index: 0;
   }
   .auth-left-grid {
     position: absolute; inset: 0; z-index: 0;
@@ -51,7 +51,6 @@
   .auth-features { margin-top: 48px; display: flex; flex-direction: column; gap: 12px; }
   .auth-feat { display: flex; align-items: center; gap: 12px; color: var(--text2); font-size: 13px; }
   .auth-feat-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
-
   .auth-right {
     width: 420px; min-width: 380px; background: var(--bg2);
     border-left: 1px solid var(--border); display: flex; flex-direction: column;
@@ -68,172 +67,232 @@
   .auth-tab.on { background: var(--bg5); color: var(--text); }
   .auth-field { margin-bottom: 14px; }
   .auth-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
-  .auth-field input {
-    width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border);
-    border-radius: var(--radius); color: var(--text); font-size: 14px; font-family: 'Manrope',sans-serif;
-    outline: none; transition: border-color 0.2s;
-  }
+  .auth-field input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 14px; font-family: 'Manrope',sans-serif; outline: none; transition: border-color 0.2s; }
   .auth-field input:focus { border-color: var(--border2); background: var(--bg4); }
-  .auth-btn {
-    width: 100%; padding: 11px; background: var(--bg5); border: 1px solid var(--border2);
-    border-radius: var(--radius); color: var(--text); font-size: 13px; font-weight: 700;
-    cursor: pointer; transition: all 0.2s; font-family: 'Manrope',sans-serif; margin-top: 6px;
-    letter-spacing: 0.3px;
-  }
+  .auth-btn { width: 100%; padding: 11px; background: var(--bg5); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Manrope',sans-serif; margin-top: 6px; letter-spacing: 0.3px; }
   .auth-btn:hover { background: var(--border2); }
   .auth-err { color: var(--danger); font-size: 12px; margin-top: 10px; display: none; }
-
   @media (max-width: 768px) {
     .auth-left { display: none; }
     .auth-right { width: 100%; min-width: unset; border-left: none; }
   }
 
-  /* LAYOUT */
-  #app { display: flex; height: 100vh; display: none; }
+  /* ═══════════════════════════════════════
+     APP LAYOUT — GOOGLE KEEP STYLE
+  ═══════════════════════════════════════ */
+  #app { display: flex; flex-direction: column; height: 100vh; display: none; }
 
-  /* SIDEBAR */
-  #sidebar { width: 220px; min-width: 220px; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
-  .sb-head { padding: 20px 14px 16px; border-bottom: 1px solid var(--border); }
-  .sb-logo { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text3); letter-spacing: 0.5px; }
-  .sb-logo em { color: var(--border2); font-style: normal; }
-  .sb-user { font-size: 11px; color: var(--text3); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.7; }
-  .sb-sec { padding: 16px 6px 2px; }
-  .sb-sec-lbl { font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; padding: 0 10px; margin-bottom: 4px; opacity: 0.7; }
-  .sb-item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--text3); font-size: 12px; font-weight: 500; transition: all 0.12s; user-select: none; }
-  .sb-item:hover { background: var(--bg2); color: var(--text2); }
-  .sb-item.on { background: var(--bg3); color: var(--text); }
-  .sb-item-ic { font-size: 13px; width: 18px; text-align: center; opacity: 0.7; }
-  .sb-item.on .sb-item-ic { opacity: 1; }
-  .sb-cnt { margin-left: auto; font-size: 10px; color: var(--text3); font-family: 'Space Mono', monospace; }
-  .sb-item.on .sb-cnt { color: var(--text2); }
-  .sb-folders { flex: 1; overflow-y: auto; padding-bottom: 6px; }
-  .sb-folders::-webkit-scrollbar { width: 3px; }
-  .sb-folders::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
-  .sb-bot { border-top: 1px solid var(--border); padding: 8px; }
-  .add-folder-btn { width: 100%; padding: 7px 10px; background: none; border: 1px dashed var(--border); border-radius: 6px; color: var(--text3); font-size: 11px; cursor: pointer; transition: all 0.15s; font-family: 'Manrope',sans-serif; display: flex; align-items: center; gap: 6px; }
-  .add-folder-btn:hover { border-color: var(--border2); color: var(--text2); }
+  /* TOP HEADER BAR */
+  #gk-header {
+    height: var(--hh); background: var(--bg); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px; padding: 0 8px 0 8px;
+    position: relative; z-index: 50; flex-shrink: 0;
+  }
+  .gk-menu-btn {
+    width: 40px; height: 40px; border-radius: 50%; background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text3); font-size: 18px; transition: background 0.15s; flex-shrink: 0;
+  }
+  .gk-menu-btn:hover { background: var(--bg3); }
+  .gk-logo {
+    display: flex; align-items: center; gap: 8px; text-decoration: none;
+    flex-shrink: 0; margin-right: 4px;
+  }
+  .gk-logo-icon {
+    width: 32px; height: 32px; background: linear-gradient(135deg, #fdd663, #f8a000);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .gk-logo-text {
+    font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700;
+    color: var(--text2); letter-spacing: -0.5px;
+  }
 
-  /* MAIN */
-  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+  /* SEARCH BAR */
+  .gk-search {
+    flex: 1; max-width: 700px; margin: 0 auto;
+    background: var(--bg3); border-radius: 24px; border: none;
+    display: flex; align-items: center; gap: 12px; padding: 0 16px 0 20px;
+    height: 40px; transition: background 0.2s, box-shadow 0.2s;
+  }
+  .gk-search:focus-within { background: var(--bg4); box-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  .gk-search svg { opacity: 0.55; flex-shrink: 0; }
+  .gk-search input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-size: 15px; font-family: 'Manrope',sans-serif;
+  }
+  .gk-search input::placeholder { color: var(--text3); }
 
-  /* HERO BANNER — minimalist */
-  #hero-banner {
-    padding: 32px 28px 24px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+  /* HEADER RIGHT ACTIONS */
+  .gk-hdr-actions { display: flex; align-items: center; gap: 2px; margin-left: auto; flex-shrink: 0; }
+  .gk-hbtn {
+    width: 40px; height: 40px; border-radius: 50%; background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text3); font-size: 18px; transition: background 0.15s;
+  }
+  .gk-hbtn:hover { background: var(--bg3); }
+  .gk-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #8ab4f8, #4a90d9);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; flex-shrink: 0;
+    border: 2px solid transparent; transition: border-color 0.15s;
+  }
+  .gk-avatar:hover { border-color: var(--border2); }
+
+  /* BODY = SIDEBAR + MAIN */
+  #gk-body { flex: 1; display: flex; overflow: hidden; }
+
+  /* ─── SIDEBAR ─────────────────────────────── */
+  #sidebar {
+    width: var(--sbw); flex-shrink: 0; background: var(--bg);
+    overflow-y: auto; overflow-x: hidden; padding: 8px 0;
+    transition: width 0.2s ease;
+  }
+  #sidebar::-webkit-scrollbar { width: 0; }
+  .sb-item {
+    display: flex; align-items: center; gap: 0; padding: 0 12px 0 12px;
+    height: 44px; border-radius: 0 24px 24px 0; cursor: pointer;
+    color: var(--text2); font-size: 14px; font-weight: 500;
+    transition: background 0.12s; user-select: none; margin-right: 12px;
     position: relative;
   }
-  /* subtle grain texture overlay */
-  #hero-banner::after {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
+  .sb-item:hover { background: var(--bg3); }
+  .sb-item.on { background: var(--bg4); color: var(--text); font-weight: 600; }
+  .sb-item-ic {
+    width: 40px; height: 44px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
   }
-  .hero-top {
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
-    position: relative; z-index: 1;
+  .sb-item-lbl { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-cnt {
+    font-size: 12px; color: var(--text3); font-weight: 600;
+    background: var(--bg3); padding: 1px 7px; border-radius: 10px;
   }
-  .hero-brand { display: flex; flex-direction: column; gap: 6px; }
-  .hero-eyebrow {
-    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
-    color: var(--text3); text-transform: uppercase; letter-spacing: 3px;
-    display: flex; align-items: center; gap: 8px;
+  .sb-item.on .sb-cnt { background: var(--bg5); color: var(--text2); }
+  .sb-divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .sb-folders-head {
+    padding: 4px 24px; font-size: 11px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px;
   }
-  .hero-eyebrow::before { content: ''; display: block; width: 16px; height: 1px; background: var(--text3); }
-  .hero-wordmark {
-    font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700;
-    color: var(--text); letter-spacing: -1px; line-height: 1; display: flex; align-items: baseline; gap: 8px;
+  .sb-folders { padding: 0; }
+  .sb-bot { padding: 8px 12px; margin-right: 12px; }
+  .add-folder-btn {
+    width: 100%; padding: 10px 12px; background: none; border: 1px dashed var(--border);
+    border-radius: 20px; color: var(--text3); font-size: 13px; cursor: pointer;
+    transition: all 0.15s; font-family: 'Manrope',sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .hero-wordmark em { color: var(--text3); font-style: normal; font-size: 18px; letter-spacing: -0.5px; }
-  .hero-wordmark .hw-slash { color: var(--border2); font-size: 20px; margin: 0 -2px; }
-  .hero-tagline {
-    font-size: 11px; color: var(--text3); letter-spacing: 0.2px; margin-top: 2px;
-    font-weight: 500;
-  }
-  .hero-actions { display: flex; align-items: center; gap: 6px; padding-top: 4px; }
-  .hero-divider {
-    height: 1px; background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
-    margin-top: 20px; position: relative; z-index: 1;
-  }
+  .add-folder-btn:hover { border-color: var(--border2); color: var(--text2); background: var(--bg3); }
 
-  /* TOOLBAR */
-  #topbar {
-    display: flex; align-items: center; gap: 8px; padding: 10px 28px;
-    border-bottom: 1px solid var(--border); background: var(--bg);
+  /* ─── MAIN CONTENT ─────────────────────────── */
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* "CREATE NOTE" input bar (like Keep's "Take a note...") */
+  #create-bar-wrap { padding: 16px 20px 0; flex-shrink: 0; }
+  #create-bar {
+    max-width: 600px; margin: 0 auto;
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: var(--radius2); padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
-  .tb-title { font-size: 12px; font-weight: 600; color: var(--text3); flex: 1; letter-spacing: 0.2px; }
-  .tb-search {
-    display: flex; align-items: center; gap: 7px; background: var(--bg2);
-    border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 11px;
-    width: 190px; transition: all 0.2s;
+  #create-bar:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+  .cb-text { flex: 1; font-size: 15px; color: var(--text3); }
+  .cb-actions { display: flex; gap: 4px; }
+  .cb-btn {
+    width: 36px; height: 36px; border-radius: 50%; background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text3); font-size: 16px; transition: background 0.15s;
   }
-  .tb-search:focus-within { border-color: var(--border2); width: 250px; }
-  .tb-search input { background: none; border: none; outline: none; color: var(--text); font-size: 12px; font-family: 'Manrope',sans-serif; width: 100%; }
-  .tb-search input::placeholder { color: var(--text3); }
-  .tb-search svg { opacity: 0.35; flex-shrink: 0; }
-  .ib {
-    width: 32px; height: 32px; background: none; border: 1px solid var(--border);
-    border-radius: var(--radius); cursor: pointer; display: flex; align-items: center;
-    justify-content: center; color: var(--text3); transition: all 0.15s; font-size: 14px; flex-shrink: 0;
+  .cb-btn:hover { background: var(--bg4); color: var(--text2); }
+
+  /* SORT/VIEW TOOLBAR */
+  #gk-toolbar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 20px 0; flex-shrink: 0;
   }
-  .ib:hover { background: var(--bg2); color: var(--text2); border-color: var(--border2); }
-  .ib.primary {
-    background: var(--bg3); border-color: var(--border2); color: var(--text);
-    padding: 0 14px; width: auto; font-family: 'Manrope',sans-serif;
-    font-weight: 700; font-size: 12px; gap: 5px; letter-spacing: 0.2px;
-  }
-  .ib.primary:hover { background: var(--bg4); }
+  .gk-tb-title { font-size: 12px; color: var(--text3); font-weight: 600; flex: 1; letter-spacing: 0.3px; }
+  #stats-bar { display: none; }
   .sort-sel {
-    background: none; border: 1px solid var(--border); border-radius: var(--radius);
-    color: var(--text3); font-size: 11px; padding: 6px 8px; outline: none;
+    background: none; border: 1px solid var(--border); border-radius: 20px;
+    color: var(--text3); font-size: 12px; padding: 5px 10px; outline: none;
     font-family: 'Manrope',sans-serif; cursor: pointer;
   }
   .sort-sel:hover { border-color: var(--border2); color: var(--text2); }
-  #stats-bar {
-    padding: 5px 28px; font-size: 10px; color: var(--text3);
-    border-bottom: 1px solid var(--border); letter-spacing: 0.5px;
-    font-family: 'Space Mono', monospace; opacity: 0.7;
+  .gk-view-btn {
+    width: 34px; height: 34px; border-radius: 50%; background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text3); font-size: 17px; transition: background 0.15s;
+  }
+  .gk-view-btn:hover { background: var(--bg3); color: var(--text2); }
+
+  /* NOTES AREA */
+  #notes-area { flex: 1; overflow-y: auto; padding: 12px 20px 20px; }
+  #notes-area::-webkit-scrollbar { width: 6px; }
+  #notes-area::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+  /* MASONRY GRID */
+  #nc {
+    columns: auto 220px; column-gap: 12px;
+    max-width: 1400px;
+  }
+  #nc.lv {
+    columns: 1; max-width: 600px; margin: 0 auto;
   }
 
-  /* NOTES */
-  #notes-area { flex: 1; overflow-y: auto; padding: 20px 28px; }
-  #notes-area::-webkit-scrollbar { width: 4px; }
-  #notes-area::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
-  #nc { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
-  #nc.lv { grid-template-columns: 1fr; }
+  /* NOTE CARD — Keep style */
   .nc {
-    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
-    padding: 16px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
-    position: relative; display: flex; flex-direction: column; gap: 8px;
-    animation: fi 0.15s ease; overflow: hidden;
+    background: var(--bg); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 14px 16px 10px;
+    cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+    position: relative; break-inside: avoid;
+    margin-bottom: 12px; display: inline-block; width: 100%;
+    animation: fi 0.15s ease;
   }
-  @keyframes fi { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-  .nc:hover { border-color: var(--border2); background: var(--bg3); }
-  .nc.pinned { border-left: 2px solid var(--border2); }
-  .nc-color { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; }
-  .nc-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.45; padding-right: 32px; }
-  .nc-preview { font-size: 12px; color: var(--text3); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .nc-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; border-top: 1px solid var(--border); }
-  .nc-date { font-size: 10px; color: var(--text3); font-family: 'Space Mono', monospace; flex: 1; }
-  .nc-tag { font-size: 10px; color: var(--text3); }
-  .nc-tag::before { content: '#'; }
-  .nc-pin-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; opacity: 0.4; }
-  .nc-acts { display: none; position: absolute; top: 8px; right: 8px; gap: 3px; }
+  @keyframes fi { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .nc:hover { border-color: var(--border2); box-shadow: 0 4px 16px rgba(0,0,0,0.35); }
+  .nc.pinned { border-color: var(--border2); }
+  .nc-color { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 8px 0 0 8px; }
+  .nc-title { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 6px; padding-right: 28px; }
+  .nc-preview { font-size: 13px; color: var(--text2); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 10; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px; }
+  .nc-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 6px; }
+  .nc-date { font-size: 11px; color: var(--text3); flex: 1; }
+  .nc-tag { font-size: 11px; color: var(--text3); background: var(--bg3); padding: 1px 7px; border-radius: 10px; }
+  .nc-pin-badge { position: absolute; top: 10px; right: 10px; font-size: 12px; opacity: 0.6; }
+  .nc-acts { display: none; position: absolute; bottom: 8px; right: 8px; gap: 2px; }
   .nc:hover .nc-acts { display: flex; }
-  .nc.pinned:hover .nc-acts { right: 24px; }
-  .nc-act { width: 22px; height: 22px; background: var(--bg4); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.12s; }
-  .nc-act:hover { background: var(--bg5); border-color: var(--border2); }
-  .nc-act.d:hover { background: #2a1010; border-color: var(--danger); }
-  .empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; }
-  .empty-ic { font-size: 32px; margin-bottom: 14px; opacity: 0.15; }
-  .empty-txt { font-size: 13px; color: var(--text3); font-weight: 600; margin-bottom: 4px; }
-  .empty-sub { font-size: 11px; color: var(--text3); opacity: 0.5; }
+  .nc-act {
+    width: 28px; height: 28px; border-radius: 50%; background: none; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; transition: background 0.12s; color: var(--text3);
+  }
+  .nc-act:hover { background: var(--bg4); color: var(--text2); }
+  .nc-act.d:hover { background: #2a1010; color: var(--danger); }
 
-  /* EDITOR */
+  /* EMPTY STATE */
+  .empty {
+    column-span: all; text-align: center; padding: 80px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .empty-ic {
+    width: 100px; height: 100px; opacity: 0.18;
+  }
+  .empty-txt { font-size: 18px; color: var(--text3); font-weight: 400; }
+  .empty-sub { font-size: 13px; color: var(--text3); opacity: 0.6; }
+
+  /* SECTION HEADERS (Pinned / Others) */
+  .nc-section-lbl {
+    column-span: all; font-size: 11px; font-weight: 700; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 1.2px; padding: 4px 4px 10px;
+  }
+  /* for lv mode, these need to span */
+  #nc.lv .nc-section-lbl { display: block; }
+
+  /* ─── EDITOR ───────────────────────────────── */
   #eo { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
   #eo.open { display: flex; }
-  #eb { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); width: 740px; max-width: 95vw; height: 84vh; max-height: 680px; display: flex; flex-direction: column; overflow: hidden; animation: su 0.18s ease; }
+  #eb { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius2); width: 740px; max-width: 95vw; height: 84vh; max-height: 680px; display: flex; flex-direction: column; overflow: hidden; animation: su 0.18s ease; }
   @keyframes su { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
   #eh { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--bg3); }
   #epin { background: none; border: none; cursor: pointer; font-size: 15px; filter: grayscale(1); opacity: 0.4; transition: all 0.15s; flex-shrink: 0; }
@@ -264,7 +323,7 @@
   .etag-x:hover { color: var(--danger); }
   #echars { font-size: 11px; color: var(--text3); white-space: nowrap; }
 
-  /* MODALS */
+  /* ─── MODALS ───────────────────────────────── */
   .mo { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: none; align-items: center; justify-content: center; }
   .mo.open { display: flex; }
   .mb { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 26px; width: 380px; max-width: 90vw; animation: su 0.18s ease; }
@@ -281,14 +340,14 @@
   .mbtn.d { background: #2a1010; color: var(--danger); border-color: var(--danger); }
   .mbtn.d:hover { background: #3a1515; }
 
-  /* SETTINGS */
+  /* ─── SETTINGS ─────────────────────────────── */
   #so { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: none; align-items: center; justify-content: center; }
   #so.open { display: flex; }
   #sb2 { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); width: 480px; max-width: 92vw; max-height: 80vh; overflow-y: auto; animation: su 0.18s ease; }
   .s-head { display: flex; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg2); z-index: 1; }
   .s-head h2 { flex: 1; font-size: 15px; font-weight: 700; }
-  .s-close { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text3); }
-  .s-close:hover { color: var(--text); }
+  .s-close { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text3); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .s-close:hover { background: var(--bg3); color: var(--text); }
   .s-body { padding: 18px 22px; }
   .s-sec { margin-bottom: 24px; }
   .s-sec h3 { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
@@ -297,50 +356,81 @@
   .s-row-l { font-size: 13px; }
   .s-row-s { font-size: 11px; color: var(--text3); margin-top: 2px; }
   .s-sel { background: var(--bg3); border: 1px solid var(--border); border-radius: 5px; padding: 5px 9px; color: var(--text); font-size: 12px; outline: none; font-family: 'Manrope',sans-serif; cursor: pointer; }
-  .s-dbtn { padding: 6px 13px; background: #2a1010; border: 1px solid var(--danger); border-radius: 5px; color: var(--danger); font-size: 12px; cursor: pointer; font-family: 'Manrope',sans-serif; transition: all 0.15s; }
+  .s-dbtn { padding: 6px 13px; background: #2a1010; border: 1px solid var(--danger); border-radius: 20px; color: var(--danger); font-size: 12px; cursor: pointer; font-family: 'Manrope',sans-serif; transition: all 0.15s; }
   .s-dbtn:hover { background: #3a1515; }
 
-  /* CTX MENU */
-  #ctx { position: fixed; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 4px; z-index: 999; min-width: 155px; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
-  .ctx-i { padding: 7px 11px; font-size: 13px; color: var(--text2); cursor: pointer; border-radius: 4px; display: flex; align-items: center; gap: 8px; transition: all 0.12s; }
+  /* SCREEN SIZE BUTTONS */
+  .screen-size-btns { display: flex; gap: 4px; }
+  .ssb {
+    width: 36px; height: 32px; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center;
+    justify-content: center; transition: all 0.15s; opacity: 0.5;
+  }
+  .ssb:hover { background: var(--bg4); opacity: 0.8; border-color: var(--border2); }
+  .ssb.active { background: var(--bg4); border-color: var(--border2); opacity: 1; box-shadow: inset 0 0 0 1px var(--border2); }
+
+  /* ─── CTX MENU ─────────────────────────────── */
+  #ctx { position: fixed; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 4px; z-index: 999; min-width: 170px; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+  .ctx-i { padding: 8px 14px; font-size: 13px; color: var(--text2); cursor: pointer; border-radius: 4px; display: flex; align-items: center; gap: 10px; transition: all 0.12s; }
   .ctx-i:hover { background: var(--bg4); color: var(--text); }
   .ctx-i.d { color: var(--danger); }
   .ctx-i.d:hover { background: #2a1010; }
   .ctx-sep { height: 1px; background: var(--border); margin: 4px 0; }
 
-  /* TOAST */
+  /* ─── TOAST ────────────────────────────────── */
   #toast-c { position: fixed; bottom: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 7px; }
-  .toast { background: var(--bg4); border: 1px solid var(--border2); border-radius: var(--radius); padding: 11px 16px; font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 9px; animation: ti 0.25s ease; min-width: 200px; }
+  .toast { background: var(--bg4); border: 1px solid var(--border2); border-radius: 24px; padding: 10px 20px; font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 9px; animation: ti 0.25s ease; min-width: 200px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
   @keyframes ti { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
   .toast.ok { border-color: var(--success); }
   .toast.er { border-color: var(--danger); }
-
   .spin { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--text2); border-radius: 50%; animation: sp 0.8s linear infinite; margin: auto; }
   @keyframes sp { to { transform: rotate(360deg); } }
 
+  /* ─── LAYOUT MODES ─────────────────────────── */
+  body.layout-mobile #sidebar { display: none; }
+  body.layout-mobile #create-bar { max-width: 100%; }
+  body.layout-mobile #nc { columns: 1; }
+  body.layout-mobile #nc.lv { columns: 1; }
+  body.layout-mobile #gk-logo-text { display: none; }
+
+  body.layout-tablet #sidebar { width: 200px; }
+  body.layout-tablet #nc { columns: auto 180px; }
+  body.layout-tablet #sb2 { width: 95vw; }
+
+  body.layout-desktop #sidebar { width: var(--sbw); }
+
+  /* ─── SIDEBAR COLLAPSED (hamburger) ────────── */
+  body.sb-collapsed #sidebar { width: 72px; }
+  body.sb-collapsed .sb-item-lbl { display: none; }
+  body.sb-collapsed .sb-cnt { display: none; }
+  body.sb-collapsed .sb-folders-head { display: none; }
+  body.sb-collapsed .add-folder-btn span:last-child { display: none; }
+  body.sb-collapsed .sb-item { justify-content: center; padding: 0; margin-right: 4px; border-radius: 50%; width: 48px; height: 48px; margin: 0 auto 4px; }
+  body.sb-collapsed .sb-item-ic { width: 48px; }
+  body.sb-collapsed .sb-divider { margin: 4px 8px; }
+  body.sb-collapsed .add-folder-btn { border-radius: 50%; width: 48px; height: 48px; padding: 0; justify-content: center; }
+
+  /* ─── RESPONSIVE ────────────────────────────── */
   @media (max-width: 600px) {
     #sidebar { display: none; }
-    #nc { grid-template-columns: 1fr; }
+    #nc { columns: 1; }
     #eb { width: 100%; height: 100%; border-radius: 0; }
-    .hero-wordmark { font-size: 20px; }
-    #hero-banner { padding: 18px 16px 14px; }
-    #notes-area { padding: 14px 16px; }
-    #topbar { padding: 8px 16px; }
-    #stats-bar { padding: 5px 16px; }
+    #create-bar { max-width: 100%; }
+    .gk-logo-text { display: none; }
   }
 </style>
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════
+     AUTH SCREEN
+═══════════════════════════════════════════ -->
 <div id="auth-screen">
-  <!-- LEFT BRAND PANEL -->
   <div class="auth-left">
     <div class="auth-left-grid"></div>
     <div class="auth-brand">
       <div class="auth-brand-logo">Zigzag Notes</div>
-      <div class="auth-hero">
-        Умные<br>заметки<em>для всего.</em>
-      </div>
+      <div class="auth-hero">Умные<br>заметки<em>для всего.</em></div>
       <div class="auth-tagline" id="a-tag">Всегда под рукой. Облачное сохранение, мощный редактор, экспорт в ZIP.</div>
       <div class="auth-features">
         <div class="auth-feat"><div class="auth-feat-dot"></div>Облачное сохранение и синхронизация</div>
@@ -350,7 +440,6 @@
       </div>
     </div>
   </div>
-  <!-- RIGHT FORM PANEL -->
   <div class="auth-right">
     <div class="auth-right-title" id="ar-title">Добро пожаловать</div>
     <div class="auth-right-sub" id="ar-sub">Войдите в аккаунт или создайте новый</div>
@@ -379,67 +468,124 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════
+     MAIN APP
+═══════════════════════════════════════════ -->
 <div id="app">
-  <div id="sidebar">
-    <div class="sb-head">
-      <div class="sb-logo">ZZ <em>//</em> Notes</div>
-      <div class="sb-user" id="sb-u">—</div>
-    </div>
-    <div class="sb-sec">
-      <div class="sb-sec-lbl" id="sb-nav-lbl">Навигация</div>
-      <div class="sb-item on" id="n-all" onclick="sf('all')"><span class="sb-item-ic">📝</span><span id="t-all">Все заметки</span><span class="sb-cnt" id="c-all">0</span></div>
-      <div class="sb-item" id="n-pin" onclick="sf('pin')"><span class="sb-item-ic">📌</span><span id="t-pin">Закреплённые</span><span class="sb-cnt" id="c-pin">0</span></div>
-      <div class="sb-item" id="n-rem" onclick="sf('rem')"><span class="sb-item-ic">⏰</span><span id="t-rem">С напоминанием</span><span class="sb-cnt" id="c-rem">0</span></div>
-      <div class="sb-item" id="n-arc" onclick="sf('arc')"><span class="sb-item-ic">🗄️</span><span id="t-arc">Архив</span><span class="sb-cnt" id="c-arc">0</span></div>
-      <div class="sb-item" id="n-del" onclick="sf('del')"><span class="sb-item-ic">🗑️</span><span id="t-del">Корзина</span><span class="sb-cnt" id="c-del">0</span></div>
-    </div>
-    <div class="sb-sec"><div class="sb-sec-lbl" id="sb-fld-lbl">Папки</div></div>
-    <div class="sb-folders" id="flist"></div>
-    <div class="sb-bot">
-      <button class="add-folder-btn" onclick="openFolderModal()"><span>+</span><span id="t-nf">Новая папка</span></button>
-    </div>
-  </div>
 
-  <div id="main">
-    <!-- HERO BANNER -->
-    <div id="hero-banner">
-      <div class="hero-top">
-        <div class="hero-brand">
-          <div class="hero-eyebrow">Zigzag Notes</div>
-          <div class="hero-wordmark">
-            Zigzag
-            <span class="hw-slash">//</span>
-            <em id="hero-wm-notes">Заметки</em>
+  <!-- TOP HEADER -->
+  <header id="gk-header">
+    <button class="gk-menu-btn" onclick="togSidebar()" title="Меню">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <div class="gk-logo">
+      <div class="gk-logo-icon">✏️</div>
+      <span class="gk-logo-text" id="gk-logo-text">Zigzag</span>
+    </div>
+    <div class="gk-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="si" placeholder="Поиск..." oninput="onSrch()">
+    </div>
+    <div class="gk-hdr-actions">
+      <button class="gk-hbtn" onclick="doImport()" title="Импорт ZIP">📥</button>
+      <button class="gk-hbtn" onclick="exportAll()" title="Экспорт ZIP">📤</button>
+      <button class="gk-hbtn" onclick="openSettings()" title="Настройки">⚙️</button>
+      <div class="gk-avatar" id="gk-avatar" onclick="openSettings()" title="Аккаунт">Z</div>
+    </div>
+  </header>
+
+  <!-- BODY: SIDEBAR + CONTENT -->
+  <div id="gk-body">
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar">
+      <div class="sb-item on" id="n-all" onclick="sf('all')">
+        <div class="sb-item-ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.75"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/></svg>
+        </div>
+        <span class="sb-item-lbl" id="t-all">Заметки</span>
+        <span class="sb-cnt" id="c-all">0</span>
+      </div>
+      <div class="sb-item" id="n-rem" onclick="sf('rem')">
+        <div class="sb-item-ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.75"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        </div>
+        <span class="sb-item-lbl" id="t-rem">Напоминания</span>
+        <span class="sb-cnt" id="c-rem">0</span>
+      </div>
+      <div class="sb-item" id="n-pin" onclick="sf('pin')">
+        <div class="sb-item-ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.75"><path d="M17 4v7l2 3v2h-6v5l-1 1-1-1v-5H5v-2l2-3V4c0-.55.45-1 1-1h8c.55 0 1 .45 1 1zm-5 15l.7-.7V13H9v5.3L9.7 19H12z"/></svg>
+        </div>
+        <span class="sb-item-lbl" id="t-pin">Закреплённые</span>
+        <span class="sb-cnt" id="c-pin">0</span>
+      </div>
+
+      <div class="sb-divider"></div>
+
+      <div class="sb-folders-head" id="sb-fld-lbl">Папки</div>
+      <div class="sb-folders" id="flist"></div>
+      <div class="sb-bot">
+        <button class="add-folder-btn" onclick="openFolderModal()">
+          <span>+</span><span id="t-nf">Новая папка</span>
+        </button>
+      </div>
+
+      <div class="sb-divider"></div>
+
+      <div class="sb-item" id="n-arc" onclick="sf('arc')">
+        <div class="sb-item-ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.75"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+        </div>
+        <span class="sb-item-lbl" id="t-arc">Архив</span>
+        <span class="sb-cnt" id="c-arc">0</span>
+      </div>
+      <div class="sb-item" id="n-del" onclick="sf('del')">
+        <div class="sb-item-ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.75"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        </div>
+        <span class="sb-item-lbl" id="t-del">Корзина</span>
+        <span class="sb-cnt" id="c-del">0</span>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div id="main">
+
+      <!-- CREATE NOTE BAR -->
+      <div id="create-bar-wrap">
+        <div id="create-bar" onclick="openNew()">
+          <span class="cb-text" id="t-new-note">Создать заметку...</span>
+          <div class="cb-actions" onclick="event.stopPropagation()">
+            <button class="cb-btn" onclick="openNew()" title="Новая заметка">✏️</button>
           </div>
-          <div class="hero-tagline" id="hero-sub-txt">Умные заметки. Всегда под рукой.</div>
-        </div>
-        <div class="hero-actions">
-          <div class="ib" onclick="doImport()" title="Импорт ZIP">📥</div>
-          <div class="ib" onclick="exportAll()" title="Экспорт ZIP">📤</div>
-          <div class="ib" onclick="openSettings()" title="Настройки">⚙️</div>
-          <div class="ib primary" onclick="openNew()">✏️ <span id="t-new-note">Новая</span></div>
         </div>
       </div>
-      <div class="hero-divider"></div>
-    </div>
 
-    <!-- TOOLBAR -->
-    <div id="topbar">
-      <div class="tb-title" id="tb-ttl">Все заметки</div>
-      <div class="tb-search">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="si" placeholder="Поиск..." oninput="onSrch()">
+      <!-- SORT/VIEW TOOLBAR -->
+      <div id="gk-toolbar">
+        <span class="gk-tb-title" id="tb-ttl">Заметки</span>
+        <select class="sort-sel" id="ss" onchange="onSort()">
+          <option value="updated_at" id="so-upd">По дате</option>
+          <option value="title" id="so-ttl">По названию</option>
+          <option value="created_at" id="so-cre">По созданию</option>
+        </select>
+        <button class="gk-view-btn" id="vb" onclick="togView()" title="Вид">⊞</button>
       </div>
-      <select class="sort-sel" id="ss" onchange="onSort()"><option value="updated_at" id="so-upd">По дате</option><option value="title" id="so-ttl">По названию</option><option value="created_at" id="so-cre">По созданию</option></select>
-      <div class="ib" id="vb" onclick="togView()" title="Вид">⊞</div>
+
+      <!-- hidden stats bar (kept for JS compatibility) -->
+      <div id="stats-bar"><span id="stats-t">0 заметок</span></div>
+
+      <!-- NOTES GRID -->
+      <div id="notes-area"><div id="nc"></div></div>
     </div>
 
-    <div id="stats-bar"><span id="stats-t">0 заметок</span></div>
-    <div id="notes-area"><div id="nc"></div></div>
-  </div>
-</div>
+  </div><!-- /#gk-body -->
+</div><!-- /#app -->
 
-<!-- EDITOR -->
+<!-- ═══════════════════════════════════════════
+     EDITOR
+═══════════════════════════════════════════ -->
 <div id="eo"><div id="eb">
   <div id="eh">
     <button id="epin" onclick="togPin()">📌</button>
@@ -468,29 +614,21 @@
     <button class="tb" onclick="inCode()" style="font-size:10px">&lt;/&gt;</button>
     <button class="tb" onclick="inLink()">🔗</button>
     <div class="tsep"></div>
-    <button class="tb" onclick="f('undo')">↩</button>
-    <button class="tb" onclick="f('redo')">↪</button>
-    <div class="tsep"></div>
-    <select id="fsel" style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text2);font-size:11px;padding:2px;outline:none" onchange="f('fontSize',false,this.value)">
-      <option value="2">S</option><option value="3" selected>M</option><option value="4">L</option><option value="5">XL</option>
-    </select>
-    <input type="color" id="tclr" style="width:24px;height:24px;border:1px solid var(--border);border-radius:4px;cursor:pointer;padding:1px;background:var(--bg3)" title="Цвет текста" onchange="f('foreColor',false,this.value)">
-    <div class="tsep"></div>
-    <input type="color" id="nclr" value="#2a2a2a" style="width:24px;height:24px;border:1px solid var(--border);border-radius:4px;cursor:pointer;padding:1px;background:var(--bg3)" title="Цвет заметки">
+    <input type="color" id="nclr" value="#2a2a2a" title="Цвет" style="width:26px;height:26px;border:none;border-radius:4px;cursor:pointer;background:none;padding:1px">
   </div>
-  <div id="ec" contenteditable="true" oninput="updChars()" onkeydown="edKey(event)"></div>
+  <div id="ec" contenteditable="true" onkeydown="edKey(event)" oninput="updChars()"></div>
   <div id="ef">
-    <input type="text" class="tag-inp" id="tgi" placeholder="#тег" onkeydown="tagKD(event)">
+    <input class="tag-inp" id="tgi" placeholder="# тег" onkeydown="tagKD(event)">
     <div id="etags"></div>
-    <span id="echars">0</span>
+    <span id="echars">0 симв.</span>
   </div>
 </div></div>
 
 <!-- FOLDER MODAL -->
 <div class="mo" id="fm"><div class="mb">
   <div class="mb-title" id="fm-ttl">Новая папка</div>
-  <div class="mb-field"><label id="fm-n">Название</label><input type="text" id="fn-i" placeholder="Моя папка" onkeydown="if(event.key==='Enter')saveFM()"></div>
-  <div class="mb-field"><label id="fm-ic">Иконка</label><input type="text" id="fi-i" placeholder="📁" style="width:70px"></div>
+  <div class="mb-field"><label id="fm-n">Название</label><input type="text" id="fn-i"></div>
+  <div class="mb-field"><label id="fm-ic">Иконка</label><input type="text" id="fi-i" value="📁" style="width:60px"></div>
   <div class="mb-field"><label id="fm-c">Цвет</label><input type="color" id="fc-i" value="#555555"></div>
   <div class="mb-actions">
     <button class="mbtn s" onclick="closeFM()" id="fm-can">Отмена</button>
@@ -501,7 +639,7 @@
 <!-- DELETE MODAL -->
 <div class="mo" id="dm"><div class="mb">
   <div class="mb-title" id="dm-ttl">Удалить заметку?</div>
-  <div style="font-size:13px;color:var(--text2);margin-bottom:14px" id="dm-txt">Заметка будет перемещена в корзину.</div>
+  <div style="font-size:13px;color:var(--text3);margin-bottom:4px" id="dm-txt">Заметка будет перемещена в корзину.</div>
   <div class="mb-actions">
     <button class="mbtn s" onclick="closeDM()" id="dm-can">Отмена</button>
     <button class="mbtn d" onclick="confirmDel()" id="dm-del">Удалить</button>
@@ -526,6 +664,17 @@
       </div>
       <div class="s-row"><div><div class="s-row-l" id="s-vw-l">Вид</div></div>
         <select class="s-sel" id="s-vw" onchange="chView(this.value)"><option value="grid" id="sv-g">Сетка</option><option value="list" id="sv-l">Список</option></select>
+      </div>
+      <div class="s-row">
+        <div>
+          <div class="s-row-l" id="s-scr-l">Размер экрана</div>
+          <div class="s-row-s" id="s-scr-s">Адаптировать интерфейс</div>
+        </div>
+        <div class="screen-size-btns" id="screen-size-btns">
+          <button class="ssb" id="ssb-mobile" onclick="chScreenSize('mobile')" title="Мобильный">📱</button>
+          <button class="ssb" id="ssb-tablet" onclick="chScreenSize('tablet')" title="Планшет">⬜</button>
+          <button class="ssb active" id="ssb-desktop" onclick="chScreenSize('desktop')" title="ПК">🖥️</button>
+        </div>
       </div>
     </div>
     <div class="s-sec">
@@ -576,10 +725,10 @@ async function authApi(method, path, body) {
 
 // ── TRANSLATIONS ───────────────────────────────────
 const T = {
-  ru:{ tagline:'Умные заметки. Всегда под рукой.', login:'Войти', reg:'Регистрация', pw:'Пароль', cpw:'Подтвердите пароль', loginBtn:'Войти', regBtn:'Создать аккаунт', all:'Все заметки', pin:'Закреплённые', rem:'С напоминанием', arc:'Архив', del:'Корзина', nav:'Навигация', flds:'Папки', nf:'Новая папка', srch:'Поиск...', settings:'Настройки', save:'Сохранить', cancel:'Отмена', delete:'Удалить', delQ:'Удалить заметку?', delTxt:'Заметка будет перемещена в корзину.', edit:'Редактировать', pinV:'Закрепить', arcV:'Архивировать', expV:'Экспорт', dup:'Дублировать', acc:'Аккаунт', iface:'Интерфейс', lang:'Язык', sort:'Сортировка', view:'Вид', data:'Управление данными', expAll:'Экспорт заметок', expAllS:'Скачать ZIP архив', impN:'Импорт заметок', impS:'Загрузить ZIP архив', clrTr:'Очистить корзину', clrTrS:'Безвозвратное удаление', clr:'Очистить', exp:'Экспорт', imp:'Импорт', logout:'Выйти', fName:'Название', fIco:'Иконка', fClr:'Цвет', sUpd:'По дате', sTtl:'По названию', sCre:'По созданию', grd:'Сетка', lst:'Список', cnt:(n)=>`${n} заметок`, noN:'Нет заметок', noNH:'Нажмите «Новая» для создания', saved:'Сохранено', deleted:'Удалено', exported:'Экспорт выполнен', imported:(n)=>`Импортировано: ${n}`, trEmpty:'Корзина очищена', duped:'Дублировано', pinned:'Закреплено', unpinned:'Откреплено', arcd:'Архивировано', unarcd:'Извлечено', chars:(n)=>`${n} симв.`, newShort:'Новая', welcome:'Добро пожаловать', welcomeSub:'Войдите в аккаунт или создайте новый' },
-  en:{ tagline:'Smart notes. Always at hand.', login:'Login', reg:'Register', pw:'Password', cpw:'Confirm password', loginBtn:'Log In', regBtn:'Create Account', all:'All Notes', pin:'Pinned', rem:'With Reminders', arc:'Archive', del:'Trash', nav:'Navigation', flds:'Folders', nf:'New Folder', srch:'Search...', settings:'Settings', save:'Save', cancel:'Cancel', delete:'Delete', delQ:'Delete note?', delTxt:'Note will be moved to trash.', edit:'Edit', pinV:'Pin', arcV:'Archive', expV:'Export', dup:'Duplicate', acc:'Account', iface:'Interface', lang:'Language', sort:'Sort by', view:'View', data:'Data Management', expAll:'Export notes', expAllS:'Download ZIP archive', impN:'Import notes', impS:'Upload ZIP archive', clrTr:'Empty trash', clrTrS:'Permanent delete', clr:'Clear', exp:'Export', imp:'Import', logout:'Logout', fName:'Name', fIco:'Icon', fClr:'Color', sUpd:'By date', sTtl:'By name', sCre:'By created', grd:'Grid', lst:'List', cnt:(n)=>`${n} notes`, noN:'No notes', noNH:'Click "New" to create', saved:'Saved', deleted:'Deleted', exported:'Exported', imported:(n)=>`Imported: ${n}`, trEmpty:'Trash cleared', duped:'Duplicated', pinned:'Pinned', unpinned:'Unpinned', arcd:'Archived', unarcd:'Unarchived', chars:(n)=>`${n} chars`, newShort:'New', welcome:'Welcome', welcomeSub:'Sign in or create a new account' },
-  es:{ tagline:'Notas inteligentes. Siempre a mano.', login:'Iniciar sesión', reg:'Registrarse', pw:'Contraseña', cpw:'Confirmar contraseña', loginBtn:'Entrar', regBtn:'Crear cuenta', all:'Todas las notas', pin:'Fijadas', rem:'Con recordatorios', arc:'Archivo', del:'Papelera', nav:'Navegación', flds:'Carpetas', nf:'Nueva carpeta', srch:'Buscar...', settings:'Ajustes', save:'Guardar', cancel:'Cancelar', delete:'Eliminar', delQ:'¿Eliminar nota?', delTxt:'La nota irá a la papelera.', edit:'Editar', pinV:'Fijar', arcV:'Archivar', expV:'Exportar', dup:'Duplicar', acc:'Cuenta', iface:'Interfaz', lang:'Idioma', sort:'Ordenar', view:'Vista', data:'Datos', expAll:'Exportar notas', expAllS:'Descargar ZIP', impN:'Importar notas', impS:'Cargar ZIP', clrTr:'Vaciar papelera', clrTrS:'Eliminación permanente', clr:'Limpiar', exp:'Exportar', imp:'Importar', logout:'Salir', fName:'Nombre', fIco:'Icono', fClr:'Color', sUpd:'Por fecha', sTtl:'Por nombre', sCre:'Por creación', grd:'Cuadrícula', lst:'Lista', cnt:(n)=>`${n} notas`, noN:'Sin notas', noNH:'Clic en "Nueva" para crear', saved:'Guardado', deleted:'Eliminado', exported:'Exportado', imported:(n)=>`Importado: ${n}`, trEmpty:'Papelera limpia', duped:'Duplicado', pinned:'Fijado', unpinned:'Desfijado', arcd:'Archivado', unarcd:'Desarchivado', chars:(n)=>`${n} car.`, newShort:'Nueva', welcome:'Bienvenido', welcomeSub:'Inicia sesión o crea una cuenta' },
-  zh:{ tagline:'智能笔记，随时可用。', login:'登录', reg:'注册', pw:'密码', cpw:'确认密码', loginBtn:'登录', regBtn:'创建账户', all:'所有笔记', pin:'已置顶', rem:'有提醒', arc:'归档', del:'回收站', nav:'导航', flds:'文件夹', nf:'新文件夹', srch:'搜索...', settings:'设置', save:'保存', cancel:'取消', delete:'删除', delQ:'删除笔记？', delTxt:'笔记将移至回收站。', edit:'编辑', pinV:'置顶', arcV:'归档', expV:'导出', dup:'复制', acc:'账户', iface:'界面', lang:'语言', sort:'排序', view:'视图', data:'数据管理', expAll:'导出笔记', expAllS:'下载 ZIP 压缩包', impN:'导入笔记', impS:'上传 ZIP 压缩包', clrTr:'清空回收站', clrTrS:'永久删除', clr:'清空', exp:'导出', imp:'导入', logout:'退出', fName:'名称', fIco:'图标', fClr:'颜色', sUpd:'按日期', sTtl:'按名称', sCre:'按创建', grd:'网格', lst:'列表', cnt:(n)=>`${n} 条笔记`, noN:'没有笔记', noNH:'点击「新建」创建', saved:'已保存', deleted:'已删除', exported:'已导出', imported:(n)=>`已导入: ${n}`, trEmpty:'回收站已清空', duped:'已复制', pinned:'已置顶', unpinned:'已取消置顶', arcd:'已归档', unarcd:'已取消归档', chars:(n)=>`${n} 字符`, newShort:'新建', welcome:'欢迎', welcomeSub:'登录或创建新账户' }
+  ru:{ tagline:'Умные заметки. Всегда под рукой.', login:'Войти', reg:'Регистрация', pw:'Пароль', cpw:'Подтвердите пароль', loginBtn:'Войти', regBtn:'Создать аккаунт', all:'Все заметки', pin:'Закреплённые', rem:'С напоминанием', arc:'Архив', del:'Корзина', nav:'Навигация', flds:'Папки', nf:'Новая папка', srch:'Поиск...', settings:'Настройки', save:'Сохранить', cancel:'Отмена', delete:'Удалить', delQ:'Удалить заметку?', delTxt:'Заметка будет перемещена в корзину.', edit:'Редактировать', pinV:'Закрепить', arcV:'Архивировать', expV:'Экспорт', dup:'Дублировать', acc:'Аккаунт', iface:'Интерфейс', lang:'Язык', sort:'Сортировка', view:'Вид', data:'Управление данными', expAll:'Экспорт заметок', expAllS:'Скачать ZIP архив', impN:'Импорт заметок', impS:'Загрузить ZIP архив', clrTr:'Очистить корзину', clrTrS:'Безвозвратное удаление', clr:'Очистить', exp:'Экспорт', imp:'Импорт', logout:'Выйти', fName:'Название', fIco:'Иконка', fClr:'Цвет', sUpd:'По дате', sTtl:'По названию', sCre:'По созданию', grd:'Сетка', lst:'Список', cnt:(n)=>`${n} заметок`, noN:'Нет заметок', noNH:'Нажмите «Новая» для создания', saved:'Сохранено', deleted:'Удалено', exported:'Экспорт выполнен', imported:(n)=>`Импортировано: ${n}`, trEmpty:'Корзина очищена', duped:'Дублировано', pinned:'Закреплено', unpinned:'Откреплено', arcd:'Архивировано', unarcd:'Извлечено', chars:(n)=>`${n} симв.`, newShort:'Новая', createNote:'Создать заметку...', appName:'Zigzag', welcome:'Добро пожаловать', welcomeSub:'Войдите в аккаунт или создайте новый', scrSize:'Размер экрана', scrSizeS:'Адаптировать интерфейс', screenChanged:(s)=>({mobile:'📱 Мобильный вид',tablet:'⬜ Планшетный вид',desktop:'🖥️ Вид ПК'}[s]||s) },
+  en:{ tagline:'Smart notes. Always at hand.', login:'Login', reg:'Register', pw:'Password', cpw:'Confirm password', loginBtn:'Log In', regBtn:'Create Account', all:'All Notes', pin:'Pinned', rem:'With Reminders', arc:'Archive', del:'Trash', nav:'Navigation', flds:'Folders', nf:'New Folder', srch:'Search...', settings:'Settings', save:'Save', cancel:'Cancel', delete:'Delete', delQ:'Delete note?', delTxt:'Note will be moved to trash.', edit:'Edit', pinV:'Pin', arcV:'Archive', expV:'Export', dup:'Duplicate', acc:'Account', iface:'Interface', lang:'Language', sort:'Sort by', view:'View', data:'Data Management', expAll:'Export notes', expAllS:'Download ZIP archive', impN:'Import notes', impS:'Upload ZIP archive', clrTr:'Empty trash', clrTrS:'Permanent delete', clr:'Clear', exp:'Export', imp:'Import', logout:'Logout', fName:'Name', fIco:'Icon', fClr:'Color', sUpd:'By date', sTtl:'By name', sCre:'By created', grd:'Grid', lst:'List', cnt:(n)=>`${n} notes`, noN:'No notes', noNH:'Click "New" to create', saved:'Saved', deleted:'Deleted', exported:'Exported', imported:(n)=>`Imported: ${n}`, trEmpty:'Trash cleared', duped:'Duplicated', pinned:'Pinned', unpinned:'Unpinned', arcd:'Archived', unarcd:'Unarchived', chars:(n)=>`${n} chars`, newShort:'New', createNote:'Take a note...', appName:'Zigzag', welcome:'Welcome', welcomeSub:'Sign in or create a new account', scrSize:'Screen size', scrSizeS:'Adapt the interface', screenChanged:(s)=>({mobile:'📱 Mobile view',tablet:'⬜ Tablet view',desktop:'🖥️ Desktop view'}[s]||s) },
+  es:{ tagline:'Notas inteligentes. Siempre a mano.', login:'Iniciar sesión', reg:'Registrarse', pw:'Contraseña', cpw:'Confirmar contraseña', loginBtn:'Entrar', regBtn:'Crear cuenta', all:'Todas las notas', pin:'Fijadas', rem:'Con recordatorios', arc:'Archivo', del:'Papelera', nav:'Navegación', flds:'Carpetas', nf:'Nueva carpeta', srch:'Buscar...', settings:'Ajustes', save:'Guardar', cancel:'Cancelar', delete:'Eliminar', delQ:'¿Eliminar nota?', delTxt:'La nota irá a la papelera.', edit:'Editar', pinV:'Fijar', arcV:'Archivar', expV:'Exportar', dup:'Duplicar', acc:'Cuenta', iface:'Interfaz', lang:'Idioma', sort:'Ordenar', view:'Vista', data:'Datos', expAll:'Exportar notas', expAllS:'Descargar ZIP', impN:'Importar notas', impS:'Cargar ZIP', clrTr:'Vaciar papelera', clrTrS:'Eliminación permanente', clr:'Limpiar', exp:'Exportar', imp:'Importar', logout:'Salir', fName:'Nombre', fIco:'Icono', fClr:'Color', sUpd:'Por fecha', sTtl:'Por nombre', sCre:'Por creación', grd:'Cuadrícula', lst:'Lista', cnt:(n)=>`${n} notas`, noN:'Sin notas', noNH:'Clic en "Nueva" para crear', saved:'Guardado', deleted:'Eliminado', exported:'Exportado', imported:(n)=>`Importado: ${n}`, trEmpty:'Papelera limpia', duped:'Duplicado', pinned:'Fijado', unpinned:'Desfijado', arcd:'Archivado', unarcd:'Desarchivado', chars:(n)=>`${n} car.`, newShort:'Nueva', createNote:'Crear nota...', appName:'Zigzag', welcome:'Bienvenido', welcomeSub:'Inicia sesión o crea una cuenta', scrSize:'Tamaño de pantalla', scrSizeS:'Adaptar la interfaz', screenChanged:(s)=>({mobile:'📱 Vista móvil',tablet:'⬜ Vista tableta',desktop:'🖥️ Vista PC'}[s]||s) },
+  zh:{ tagline:'智能笔记，随时可用。', login:'登录', reg:'注册', pw:'密码', cpw:'确认密码', loginBtn:'登录', regBtn:'创建账户', all:'所有笔记', pin:'已置顶', rem:'有提醒', arc:'归档', del:'回收站', nav:'导航', flds:'文件夹', nf:'新文件夹', srch:'搜索...', settings:'设置', save:'保存', cancel:'取消', delete:'删除', delQ:'删除笔记？', delTxt:'笔记将移至回收站。', edit:'编辑', pinV:'置顶', arcV:'归档', expV:'导出', dup:'复制', acc:'账户', iface:'界面', lang:'语言', sort:'排序', view:'视图', data:'数据管理', expAll:'导出笔记', expAllS:'下载 ZIP 压缩包', impN:'导入笔记', impS:'上传 ZIP 压缩包', clrTr:'清空回收站', clrTrS:'永久删除', clr:'清空', exp:'导出', imp:'导入', logout:'退出', fName:'名称', fIco:'图标', fClr:'颜色', sUpd:'按日期', sTtl:'按名称', sCre:'按创建', grd:'网格', lst:'列表', cnt:(n)=>`${n} 条笔记`, noN:'没有笔记', noNH:'点击「新建」创建', saved:'已保存', deleted:'已删除', exported:'已导出', imported:(n)=>`已导入: ${n}`, trEmpty:'回收站已清空', duped:'已复制', pinned:'已置顶', unpinned:'已取消置顶', arcd:'已归档', unarcd:'已取消归档', chars:(n)=>`${n} 字符`, newShort:'新建', createNote:'创建笔记...', appName:'Zigzag', welcome:'欢迎', welcomeSub:'登录或创建新账户', scrSize:'屏幕尺寸', scrSizeS:'适配界面', screenChanged:(s)=>({mobile:'📱 手机视图',tablet:'⬜ 平板视图',desktop:'🖥️ 桌面视图'}[s]||s) }
 };
 
 function t(k,...a) { const l=T[S.lang]||T.ru; const v=l[k]||T.ru[k]||k; return typeof v==='function'?v(...a):v; }
@@ -596,8 +745,8 @@ const TM = {
   's-tr-l':'clrTr','s-tr-s':'clrTrS','s-tr-b':'clr','s-lo':'logout',
   'cx-ed':'edit','cx-pin':'pinV','cx-arc':'arcV','cx-exp':'expV','cx-dup':'dup','cx-del':'delete',
   'so-upd':'sUpd','so-ttl':'sTtl','so-cre':'sCre','ss-upd':'sUpd','ss-ttl':'sTtl','ss-cre':'sCre','sv-g':'grd','sv-l':'lst',
-  'esave-btn':'save','t-new-note':'newShort','ar-title':'welcome','ar-sub':'welcomeSub',
-  'hero-sub-txt':'tagline'
+  'esave-btn':'save','t-new-note':'createNote','ar-title':'welcome','ar-sub':'welcomeSub',
+  's-scr-l':'scrSize','s-scr-s':'scrSizeS','gk-logo-text':'appName'
 };
 const PH = { 'si':'srch','etitle':null,'ecat':null,'tgi':null };
 
@@ -702,11 +851,16 @@ async function startApp() {
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   const em = S.user?.email||'';
-  document.getElementById('sb-u').textContent=em;
   document.getElementById('s-em').textContent=em;
+  const av=document.getElementById('gk-avatar');
+  if(av)av.textContent=(em[0]||'Z').toUpperCase();
+  const sz=localStorage.getItem('zz_screen')||'desktop';
+  applyScreenSize(sz, false);
   await loadPrefs(); await loadFolders(); await loadNotes();
   applyT();
 }
+
+function togSidebar(){document.body.classList.toggle('sb-collapsed');}
 
 // ── PREFS ──────────────────────────────────────────
 async function loadPrefs() {
@@ -717,6 +871,9 @@ async function loadPrefs() {
     document.getElementById('ss').value=p.sort_by||'updated_at';
     document.getElementById('s-srt').value=p.sort_by||'updated_at';
     if(p.view_mode==='list'){document.getElementById('nc').classList.add('lv');document.getElementById('vb').textContent='☰';document.getElementById('s-vw').value='list';}
+    // apply saved screen size
+    const sz = localStorage.getItem('zz_screen') || 'desktop';
+    applyScreenSize(sz, false);
   }
 }
 
@@ -734,6 +891,26 @@ function chView(v){
   savePref({view_mode:v});
 }
 function togView(){const isG=!document.getElementById('nc').classList.contains('lv');chView(isG?'list':'grid');document.getElementById('s-vw').value=isG?'list':'grid';}
+
+function applyScreenSize(size, save=true) {
+  document.body.classList.remove('layout-mobile','layout-tablet','layout-desktop');
+  document.body.classList.add('layout-'+size);
+  // Update active button
+  ['mobile','tablet','desktop'].forEach(s=>{
+    document.getElementById('ssb-'+s)?.classList.toggle('active', s===size);
+  });
+  // Update icons: mobile=📱 tablet=⬜ desktop=🖥️
+  const icons = { mobile:'📱', tablet:'⬜', desktop:'🖥️' };
+  document.getElementById('ssb-mobile').textContent='📱';
+  document.getElementById('ssb-tablet').textContent='⬜';
+  document.getElementById('ssb-desktop').textContent='🖥️';
+  if(save) localStorage.setItem('zz_screen', size);
+}
+
+function chScreenSize(size) {
+  applyScreenSize(size, true);
+  toast(t('screenChanged', size), 'ok');
+}
 
 // ── NOTES ──────────────────────────────────────────
 async function loadNotes() {
@@ -793,7 +970,7 @@ function renderNotes() {
   const ns=filtNotes();
   document.getElementById('stats-t').textContent=t('cnt',ns.length);
   if(!ns.length){
-    document.getElementById('nc').innerHTML=`<div class="empty"><div class="empty-ic">📝</div><div class="empty-txt">${t('noN')}</div><div class="empty-sub">${t('noNH')}</div></div>`;
+    document.getElementById('nc').innerHTML=`<div class="empty"><svg class="empty-ic" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg><div class="empty-txt">${t('noN')}</div><div class="empty-sub">${t('noNH')}</div></div>`;
     return;
   }
   document.getElementById('nc').innerHTML=ns.map(n=>{
@@ -1007,5 +1184,8 @@ document.getElementById('eo').addEventListener('click',function(e){if(e.target==
 applyT();
 tryAuto().then(ok=>{if(!ok)document.getElementById('auth-screen').style.display='flex';});
 </script>
+</body>
+</html>
+
 </body>
 </html>
